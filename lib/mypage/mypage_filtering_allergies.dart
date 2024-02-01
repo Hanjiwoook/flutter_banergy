@@ -57,14 +57,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // 왼쪽 필터 리스트와 오른쪽 필터 리스트를 나누기
-    int halfLength = checkList2.length ~/ 2;
-    List<String> leftFilterList = checkList2.sublist(0, halfLength);
-    List<String> rightFilterList = checkList2.sublist(halfLength);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("알러지 필터링"),
+        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -84,31 +80,30 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       bottomNavigationBar: const BottomNavBar(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                // 왼쪽 필터
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(20.0),
-                    color: Colors.white, // 바탕색을 하얀색으로 변경
-                    child: buildFilterList(leftFilterList),
+      body: Column(
+        children: [
+          // Image 추가
+          Image.asset(
+            'images/000.jpeg',
+            width: 80,
+            height: 80,
+          ),
+          // 중앙에 정렬된 필터 영역
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(20.0),
+              color: Colors.white,
+              child: Row(
+                children: [
+                  // 왼쪽 필터
+                  Expanded(
+                    child: buildFilterList(checkList2),
                   ),
-                ),
-                // 오른쪽 필터
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(20.0),
-                    color: Colors.white, // 바탕색을 하얀색으로 변경
-                    child: buildFilterList(rightFilterList),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -143,6 +143,7 @@ class _MyHomePageState extends State<MyHomePage>
     return Scaffold(
       appBar: AppBar(
         title: const Text("마이페이지"),
+        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
       ),
       body: SingleChildScrollView(
         child: _buildlist(),
@@ -156,7 +157,8 @@ class _MyHomePageState extends State<MyHomePage>
       padding: const EdgeInsets.all(6.0),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(20.0), // 내부 여백 추가
+        padding: const EdgeInsets.all(20.0),
+        // 내부 여백 추가
 
         /*decoration: BoxDecoration(
           border: Border.all(
@@ -245,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage>
             fixedSize: const Size(double.infinity, 45),
             backgroundColor: const Color.fromARGB(255, 29, 171, 102),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(30.0),
             ),
           ),
           child: Text(

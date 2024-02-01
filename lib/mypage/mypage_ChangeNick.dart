@@ -33,7 +33,6 @@ class _ChangeNickState extends State<ChangeNick>
 
   @override
   Widget build(BuildContext context) {
-    theme:
     ThemeData(
       colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 50, 160, 107)),
@@ -42,6 +41,7 @@ class _ChangeNickState extends State<ChangeNick>
     return Scaffold(
       appBar: AppBar(
         title: const Text("닉네임 변경하기"),
+        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -50,15 +50,21 @@ class _ChangeNickState extends State<ChangeNick>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Image.asset(
+                  'images/000.jpeg',
+                  width: 80,
+                  height: 80,
+                ),
                 const SizedBox(height: 20),
                 const Text(
                   '닉네임 변경',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 60),
-                InputField(label: '원래 닉네임 *'),
+                const InputField(label: '원래 닉네임 *'),
                 const SizedBox(height: 20),
-                InputField(label: '변경할 닉네임 *', hintText: '변경할 닉네임을 입력하세요'),
+                const InputField(
+                    label: '변경할 닉네임 *', hintText: '변경할 닉네임을 입력하세요'),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
@@ -80,6 +86,7 @@ class _ChangeNickState extends State<ChangeNick>
                     );
                   },
                   style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
                     backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                   ),
                   child: const Text('닉네임 변경',
@@ -112,51 +119,12 @@ class InputField extends StatelessWidget {
         ),
         TextField(
           decoration: InputDecoration(
-            hintText: hintText,
-            border: const OutlineInputBorder(),
-          ),
+              hintText: hintText,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              )),
         ),
       ],
     );
   }
 }
-/*
-class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.adjust),
-          label: 'Lens',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'My',
-        ),
-      ],
-      onTap: (index) {
-        // Handle navigation based on the tapped item index
-        if (index == 0) {
-          // Home icon is tapped, navigate to the main page
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MainpageApp()),
-          );
-        } else if (index == 2) {
-          // My icon is tapped, navigate to the MypageApp
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MypageApp()),
-          );
-        }
-      },
-    );
-  }
-}*/

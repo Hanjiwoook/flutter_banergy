@@ -4,9 +4,13 @@ import 'package:flutter_banergy/main.dart';
 void main() {
   runApp(MaterialApp(
     initialRoute: '/',
-    routes: {
-      '/': (context) => InquiryScreen(),
-      '/inquiryDetail': (context) => InquiryDetailScreen(),
+    onGenerateRoute: (settings) {
+      if (settings.name == '/inquiryDetail') {
+        return MaterialPageRoute(
+          builder: (context) => const InquiryDetailScreen(),
+        );
+      }
+      return null;
     },
   ));
 }
@@ -14,14 +18,18 @@ void main() {
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 class InquiryScreen extends StatefulWidget {
+  const InquiryScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _InquiryScreenState createState() => _InquiryScreenState();
 }
 
 class _InquiryScreenState extends State<InquiryScreen> {
+  bool isFAQVisible = false;
+
   @override
   Widget build(BuildContext context) {
-    theme:
     ThemeData(
       colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 50, 160, 107)),
@@ -32,7 +40,9 @@ class _InquiryScreenState extends State<InquiryScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("문의하기"),
+          backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         ),
+        // bottomNavigationBar: const BottomNavBar(), // 주석 처리
         body: SingleChildScrollView(
           child: Center(
             child: Padding(
@@ -40,6 +50,11 @@ class _InquiryScreenState extends State<InquiryScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Image.asset(
+                    'images/000.jpeg',
+                    width: 80,
+                    height: 80,
+                  ),
                   const Text(
                     '문의하기',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -60,31 +75,14 @@ class _InquiryScreenState extends State<InquiryScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState != null &&
                           _formKey.currentState!.validate()) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: const Text('문의가 성공적으로 접수되었습니다.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(); // 다이얼로그 닫기
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/inquiryDetail',
-                                    );
-                                  },
-                                  child: const Text('확인'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        setState(() {
+                          isFAQVisible = true;
+                        });
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -93,11 +91,14 @@ class _InquiryScreenState extends State<InquiryScreen> {
                     child: const Text('문의하기',
                         style: TextStyle(color: Colors.white)),
                   ),
+                  const SizedBox(height: 40),
+                  if (isFAQVisible) const FAQList(),
                 ],
               ),
             ),
           ),
         ),
+        bottomNavigationBar: const BottomNavBar(),
       ),
     );
   }
@@ -109,11 +110,11 @@ class InputField extends StatelessWidget {
   final String hintText;
 
   const InputField({
+    super.key,
     required this.label,
     this.isTextArea = false,
     this.hintText = "",
   });
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -125,7 +126,7 @@ class InputField extends StatelessWidget {
         ),
         if (isTextArea)
           TextFormField(
-            maxLines: 10,
+            maxLines: 4,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return '필수 입력 항목입니다.';
@@ -156,18 +157,20 @@ class InputField extends StatelessWidget {
 }
 
 class InquiryDetailScreen extends StatelessWidget {
+  const InquiryDetailScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('문의 화면'),
       ),
-      body: SingleChildScrollView(
+      body: const SingleChildScrollView(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Center(
+              Center(
                 child: Text(
                   '자주 묻는 내용',
                   style: TextStyle(
@@ -186,11 +189,13 @@ class InquiryDetailScreen extends StatelessWidget {
 }
 
 class FAQList extends StatelessWidget {
+  const FAQList({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return const SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(40.0),
+        padding: EdgeInsets.symmetric(horizontal: 3.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -227,22 +232,23 @@ class FAQItem extends StatefulWidget {
   final String question;
   final String answer;
 
-  FAQItem({
+  const FAQItem({
+    super.key,
     required this.question,
     required this.answer,
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _FAQItemState createState() => _FAQItemState();
 }
 
 class _FAQItemState extends State<FAQItem> {
-  bool isExpanded = false;
+  bool isExpanded = true;
 
   @override
   Widget build(BuildContext context) {
     double containerWidth = MediaQuery.of(context).size.width - 32;
-
     return Container(
       decoration: BoxDecoration(
         border: Border.all(

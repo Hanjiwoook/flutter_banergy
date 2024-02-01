@@ -33,7 +33,8 @@ class _ChangeidpwState extends State<Changeidpw>
   Widget build(BuildContext context) {
     ThemeData(
       colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 29, 171, 102)),
+        seedColor: const Color.fromARGB(255, 29, 171, 102),
+      ),
       useMaterial3: false,
     );
 
@@ -42,6 +43,7 @@ class _ChangeidpwState extends State<Changeidpw>
       child: Scaffold(
         appBar: AppBar(
           title: const Text("비번 변경하기"),
+          backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         ),
         body: SingleChildScrollView(
           child: Center(
@@ -50,6 +52,11 @@ class _ChangeidpwState extends State<Changeidpw>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Image.asset(
+                    'images/000.jpeg',
+                    width: 80,
+                    height: 80,
+                  ),
                   const Text(
                     '비밀번호 변경하기',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -87,6 +94,7 @@ class _ChangeidpwState extends State<Changeidpw>
                       );
                     },
                     style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
                       backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                     ),
                     child: const Text('비밀번호 변경',
@@ -170,10 +178,12 @@ class InputField extends StatelessWidget {
               ),
               TextField(
                 decoration: InputDecoration(
-                  hintText: hintTexts[i],
-                  border: const OutlineInputBorder(),
-                  //contentPadding: EdgeInsets.symmetric(vertical: 1.0),
-                ),
+                    hintText: hintTexts[i],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    )
+                    //contentPadding: EdgeInsets.symmetric(vertical: 1.0),
+                    ),
               ),
             ],
           ),

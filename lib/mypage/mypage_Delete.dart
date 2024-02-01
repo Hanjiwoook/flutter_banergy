@@ -21,6 +21,7 @@ class Delete extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("회원 탈퇴하기"),
+        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -29,14 +30,19 @@ class Delete extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Image.asset(
+                  'images/000.jpeg',
+                  width: 80,
+                  height: 80,
+                ),
                 const Text(
                   '탈퇴하기',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 40),
-                InputField(label: '계정 비밀번호', hintText: '계정 비밀번호를 입력하세요'),
+                const InputField(label: '계정 비밀번호', hintText: '계정 비밀번호를 입력하세요'),
                 const SizedBox(height: 20),
-                InputField(
+                const InputField(
                   label: '탈퇴 사유',
                   hintText: '간단한 탈퇴 사유를 적어주세요.',
                 ),
@@ -63,6 +69,7 @@ class Delete extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
                     backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                   ),
                   child:
@@ -96,50 +103,12 @@ class InputField extends StatelessWidget {
         TextField(
           decoration: InputDecoration(
             hintText: hintText,
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30.0),
+            ),
           ),
         ),
       ],
     );
   }
 }
-/*
-class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.adjust),
-          label: 'Lens',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'My',
-        ),
-      ],
-      onTap: (index) {
-        // Handle navigation based on the tapped item index
-        if (index == 0) {
-          // Home icon is tapped, navigate to the main page
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MainpageApp()),
-          );
-        } else if (index == 2) {
-          // My icon is tapped, navigate to the MypageApp
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MypageApp()),
-          );
-        }
-      },
-    );
-  }
-}*/

@@ -20,6 +20,7 @@ class Freeboard extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("자유게시판"),
+          backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         ),
         body: SingleChildScrollView(
           child: Center(
@@ -28,16 +29,21 @@ class Freeboard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Image.asset(
+                    'images/000.jpeg',
+                    width: 80,
+                    height: 80,
+                  ),
                   const Text(
                     '자유게시판',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  Column(
+                  const Column(
                     children: [
                       InputField(
                         label: '제목 *',
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
                       InputField(
                         label: '내용 *',
                         isTextArea: true,
@@ -66,6 +72,7 @@ class Freeboard extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
                       backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                     ),
                     child: const Text('글 올리기',
@@ -106,16 +113,18 @@ class InputField extends StatelessWidget {
           TextFormField(
             maxLines: 10,
             decoration: InputDecoration(
-              hintText: hintText,
-              border: const OutlineInputBorder(),
-            ),
+                hintText: hintText,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                )),
           )
         else
           TextFormField(
             decoration: InputDecoration(
-              hintText: hintText,
-              border: const OutlineInputBorder(),
-            ),
+                hintText: hintText,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                )),
           ),
       ],
     );

@@ -24,7 +24,7 @@ class MainpageApp extends StatelessWidget {
       title: '식품 알레르기 관리 앱',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 50, 160, 107)),
+            seedColor: const Color.fromARGB(255, 29, 171, 102)),
         useMaterial3: true,
       ),
       home: const HomeScreen(),
@@ -40,6 +40,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('식품 알레르기 관리 앱'),
+        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         actions: [
           InkWell(
             onTap: () {

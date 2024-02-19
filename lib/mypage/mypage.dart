@@ -14,7 +14,8 @@ import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import '../mypage/mypage_allergy_information.dart';
 import '../mypage/mypage_record_allergy_reactions.dart';
 import '../mypage/mypage_filtering_allergies.dart';
-import '../mypage/mypage_freeboard.dart';
+import 'mypage_Freeboard.dart';
+import 'mypage_Freeboard_WriteScreen.dart';
 //import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 
 void main() {
@@ -78,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage>
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const recordallergyreactions()),
+              builder: (context) => const Recordallergyreactions()),
         );
         break;
       case "알러지 필터링":

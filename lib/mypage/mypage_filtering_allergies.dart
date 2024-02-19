@@ -31,7 +31,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String? checkListValue1;
   List<String?> checkListValue2 = [];
 
   List<String> checkList2 = [
@@ -70,23 +69,18 @@ class _MyHomePageState extends State<MyHomePage> {
             );
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
-              print("저장된 값: $checkListValue1, $checkListValue2");
-            },
-          ),
-        ],
       ),
       bottomNavigationBar: const BottomNavBar(),
       body: Column(
         children: [
           // Image 추가
-          Image.asset(
-            'images/000.jpeg',
-            width: 80,
-            height: 80,
+          Container(
+            color: Colors.white,
+            child: Image.asset(
+              'images/000.jpeg',
+              width: 80,
+              height: 80,
+            ),
           ),
           // 중앙에 정렬된 필터 영역
           Expanded(
@@ -100,6 +94,32 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: buildFilterList(checkList2),
                   ),
                 ],
+              ),
+            ),
+          ),
+          // 적용 버튼 추가
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            color: Colors.white,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: const Color.fromARGB(255, 29, 171, 102),
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
+              onPressed: () {
+                // 적용 버튼을 눌렀을 때 수행할 동작
+                print("저장된 값: $checkListValue2");
+              },
+              child: const Text(
+                '적용',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

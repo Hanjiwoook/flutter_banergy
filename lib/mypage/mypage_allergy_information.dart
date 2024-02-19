@@ -97,39 +97,4 @@ class _MyHomePageState extends State<MyHomePage>
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.adjust),
-          label: "Lens",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'My',
-        ),
-      ],
-      onTap: (index) {
-        // Handle navigation based on the tapped item index
-        if (index == 0) {
-          // Home icon is tapped, restart the current page
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MainpageApp()),
-          );
-        } else if (index == 2) {
-          // My icon is tapped, navigate to MypageApp
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MypageApp()),
-          );
-        }
-      },
-    );
-  }
-} */
+  */

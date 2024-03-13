@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
+import 'package:flutter_banergy/bottombar.dart';
 
 void main() {
   runApp(const Recordallergyreactions());
@@ -78,17 +79,5 @@ class _MyHomePageState extends State<MyHomePage>
       body: Container(),
       bottomNavigationBar: const BottomNavBar(),
     );
-  }
-}
-
-class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({Key? key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        // BottomNavigationBar에 대한 구현 추가
-        // 예를 들어 BottomNavigationBarItem 및 해당 동작 설정
-        );
   }
 }

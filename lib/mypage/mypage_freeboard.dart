@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
-import 'package:flutter_banergy/mypage/mypage_Freeboard_WriteScreen.dart';
+import 'package:flutter_banergy/mypage/mypage_freeboard_write_screen.dart';
 
 void main() {
   runApp(const Freeboard());
@@ -36,7 +36,7 @@ class Freeboard extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(),
+      //bottomNavigationBar: const BottomNavBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(

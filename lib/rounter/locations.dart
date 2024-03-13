@@ -5,7 +5,7 @@ import 'package:flutter_banergy/login/login_login.dart';
 class HomeLocation extends BeamLocation {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
-    return [BeamPage(child: LoginApp(), key: ValueKey('home'))];
+    return [BeamPage(child: LoginApp(), key: const ValueKey('home'))];
   }
 
   @override

@@ -1,22 +1,15 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
+import 'package:flutter_banergy/bottombar.dart';
+//import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/mypage_ChangeNick.dart';
 import 'package:flutter_banergy/mypage/mypage_Changeidpw.dart';
 import 'package:flutter_banergy/mypage/mypage_Delete.dart';
 import 'package:flutter_banergy/mypage/mypage_InquiryScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_addProductScreen.dart';
-import 'package:flutter_banergy/product/code.dart';
-import 'package:flutter_banergy/product/information.dart';
-import 'package:flutter_tesseract_ocr/android_ios.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import '../mypage/mypage_allergy_information.dart';
 import '../mypage/mypage_record_allergy_reactions.dart';
 import '../mypage/mypage_filtering_allergies.dart';
-import 'mypage_Freeboard.dart';
-import 'mypage_Freeboard_WriteScreen.dart';
-//import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
+import '../mypage/mypage_freeboard.dart';
 
 void main() {
   runApp(const MypageApp());
@@ -115,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 문의하기 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => InquiryScreen()),
+          MaterialPageRoute(builder: (context) => const InquiryScreen()),
         );
 
         break;
@@ -153,21 +146,13 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
+//소제목 글꼴
   Widget _buildlist() {
     return Padding(
       padding: const EdgeInsets.all(6.0),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(20.0),
-        // 내부 여백 추가
-
-        /*decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.green, // 테두리 색상 설정
-            width: 2.0, // 테두리 두께 설정
-          ),
-          borderRadius: BorderRadius.circular(12.0), // 테두리 모서리를 둥글게 만듦
-        ),*/
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -215,6 +200,7 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
+  //큰 제목 글꼴
   Widget _buildSectionTitle(String title, IconData iconData) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -237,6 +223,7 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
+//버튼 속성
   Widget _buildButton(String buttonText) => SizedBox(
         width: double.infinity,
         child: ElevatedButton(
@@ -261,152 +248,4 @@ class _MyHomePageState extends State<MyHomePage>
           ),
         ),
       );
-}
-
-class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({Key? key}) : super(key: key);
-
-  @override
-  _BottomNavBarState createState() => _BottomNavBarState();
-}
-
-class _BottomNavBarState extends State<BottomNavBar> {
-  final ImagePicker _imagePicker = ImagePicker();
-  final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
-  String? code;
-  String parsedText = '';
-
-  late File? pickedImage;
-  late XFile? pickedFile;
-  late String img64;
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.adjust),
-          label: "Lens",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'My',
-        ),
-      ],
-      onTap: (index) {
-        if (index == 0) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MainpageApp()),
-          );
-        } else if (index == 1) {
-          showModalBottomSheet(
-            context: context,
-            builder: (BuildContext context) {
-              return SingleChildScrollView(
-                  child: Container(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // 카메라 부분
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          Navigator.pop(context);
-
-                          final pickedFile = await _imagePicker.pickImage(
-                            source: ImageSource.camera,
-                          );
-
-                          if (pickedFile != null) {
-                            // OCR 수행
-                            var ocrText = await FlutterTesseractOcr.extractText(
-                              pickedFile.path,
-                              language: 'kor',
-                            );
-
-                            // Information 화면으로 이동하여 OCR 결과값 전달
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) => Information(
-                                  image: File(pickedFile.path),
-                                  parsedText: ocrText,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        child: Text('Camera'),
-                      ),
-                    ),
-                    // 갤러리 부분
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          final pickedFile = await _imagePicker.pickImage(
-                              source: ImageSource.gallery);
-
-                          if (pickedFile != null) {
-                            // OCR 수행
-                            var ocrText = await FlutterTesseractOcr.extractText(
-                              pickedFile.path,
-                              language: 'kor',
-                            );
-
-                            // Information 화면으로 이동하여 OCR 결과값 전달
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) => Information(
-                                  image: File(pickedFile.path),
-                                  parsedText: ocrText,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        child: const Text('Gallery'),
-                      ),
-                    ),
-
-                    // qr 코드 + 바코드 부분
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
-                            context: context,
-                            onCode: (code) {
-                              // 화면 이동만 처리
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CodeScreen(
-                                      resultCode: code ?? "스캔된 정보 없음"),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: const Text('QR/Barcode'),
-                      ),
-                    ),
-                  ],
-                ),
-              ));
-            },
-          );
-        } else if (index == 2) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MypageApp()),
-          );
-        }
-      },
-    );
-  }
 }

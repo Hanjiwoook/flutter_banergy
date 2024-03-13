@@ -98,7 +98,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
             ),
           ),
         ),
-        bottomNavigationBar: const BottomNavBar(),
+        //bottomNavigationBar: const BottomNavBar(),
       ),
     );
   }

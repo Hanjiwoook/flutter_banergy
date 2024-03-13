@@ -5,6 +5,7 @@ import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter_tesseract_ocr/flutter_tesseract_ocr.dart';
+import 'package:flutter_banergy/bottombar.dart';
 
 void main() {
   runApp(const MaterialApp(

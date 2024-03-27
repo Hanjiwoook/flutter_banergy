@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   set code(String? code) {}
 
-  /*@override
+  @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage>
   void dispose() {
     _tabController.dispose();
     super.dispose();
-  }*/
+  }
 
   void _navigateToPage(String pageName) {
     // 페이지 이름에 따라 다른 동작 수행

@@ -1,98 +1,140 @@
+//앱바에서 검색한 후 보여지는 부분
+
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/bottombar.dart';
+import 'package:flutter_banergy/appbar/search_widget.dart';
+import 'package:flutter_banergy/mainDB.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key, required String searchText});
+  final String searchText;
+
+  const SearchScreen({super.key, required this.searchText});
 
   @override
-  _SearchScreenState createState() => _SearchScreenState();
+  _SearchScreenState createState() => _SearchScreenState(searchText);
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  List<Map<String, dynamic>> _products = [];
+  late String searchText;
+  late List<Product> products = [];
+
+  _SearchScreenState(this.searchText); // 생성자 수정
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    final response = await http.get(
+      Uri.parse('http:// 172.16.104.23:8000/?query=$searchText'),
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        final List<dynamic> productList = json.decode(response.body);
+        products = productList.map((item) => Product.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('상품 검색'),
-      ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    hintText: '상품 검색',
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _performSearch(_searchController.text);
-                },
-                child: const Text('검색'),
-              ),
-            ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _products.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_products[index]['name']),
-                  onTap: () {
-                    _showProductDetail(_products[index]);
-                  },
-                );
-              },
-            ),
+        actions: const [
+          Flexible(
+            child: SearchWidget(),
           ),
         ],
       ),
+      body: serachGrid(products: products),
+      bottomNavigationBar: const BottomNavBar(),
+    );
+  }
+}
+
+class serachGrid extends StatefulWidget {
+  final List<Product> products;
+
+  const serachGrid({super.key, required this.products});
+
+  @override
+  State<serachGrid> createState() => _serachGridState();
+}
+
+class _serachGridState extends State<serachGrid> {
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+      ),
+      itemCount: widget.products.length,
+      itemBuilder: (context, index) {
+        return Card(
+          child: InkWell(
+            onTap: () {
+              _handleProductClick(context, widget.products[index]);
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Image.network(
+                      widget.products[index].frontproduct,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  widget.products[index].name,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4.0),
+                Text(widget.products[index].allergens),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  void _performSearch(String query) async {
-    final response =
-        await http.get(Uri.parse('http://127.0.0.1:5000/?query=$query'));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      setState(() {
-        _products = data
-            .map<Map<String, dynamic>>((item) => item as Map<String, dynamic>)
-            .toList();
-      });
-    } else {
-      throw Exception('Failed to load products');
-    }
-  }
-
-  void _showProductDetail(Map<String, dynamic> product) {
+  void _handleProductClick(BuildContext context, Product product) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(product['name']),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('카테고리: ${product['kategorie']}'),
-              Text('바코드: ${product['barcode']}'),
-              Text('정면 이미지: ${product['frontproduct']}'),
-              Text('후면 이미지: ${product['backproduct']}'),
-              Text('알레르기 식품: ${product['allergens']}'),
-            ],
+          title: const Text('상품 정보'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('카테고리: ${product.kategorie}'),
+                Text('이름: ${product.name}'),
+                Image.network(
+                  product.frontproduct,
+                  fit: BoxFit.cover,
+                ),
+                Image.network(
+                  product.backproduct,
+                  fit: BoxFit.cover,
+                ),
+                Text('알레르기 식품: ${product.allergens}'),
+              ],
+            ),
           ),
-          actions: [
+          actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.of(context).pop();
               },
               child: const Text('닫기'),
             ),

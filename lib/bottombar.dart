@@ -6,6 +6,7 @@ import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/information.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 //바텀 바 내용 구현
 class BottomNavBar extends StatefulWidget {
@@ -82,7 +83,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'My',
-            activeIcon: Icon(Icons.person, color: Colors.grey)),
+            activeIcon: Icon(Icons.person, color: Colors.green)),
       ],
       onTap: (index) async {
         setState(() {
@@ -104,6 +105,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
+                        // 추가: 카메라 권한 확인 및 요청
+                        var cameraStatus = await Permission.camera.status;
+                        if (!cameraStatus.isGranted) {
+                          await Permission.camera.request();
+                        }
                         final pickedFile = await _imagePicker.pickImage(
                           source: ImageSource.camera,
                         );
@@ -176,7 +182,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           });
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const MypageApp()),
+            MaterialPageRoute(builder: (context) => const MyHomePage()),
           );
         }
       },

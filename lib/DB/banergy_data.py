@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from random import shuffle #랜덤을 위함
 import csv
 
 # Flask 앱 초기화
@@ -54,19 +55,29 @@ if __name__ == '__main__':
 
         db.session.commit()
 
-# 검색 바 부분
+
 @app.route('/', methods=['GET'])
 def get_products():
-    # 검색어 가져오기
     query = request.args.get('query', '')
     
-    # 해당 내용 없으면 반환
-    if not query:
-        products = Product.query.all()
+    if query:
+        # 검색어가 있는 경우 검색어를 포함하는 제품 정보를 반환합니다.
+        if query == '라면':
+            products = Product.query.filter(Product.kategorie.like("%라면%")).all()
+        elif query == '디저트':
+            products = Product.query.filter(Product.kategorie.like("%디저트%")).all()
+        elif query == '음료':
+            products = Product.query.filter(Product.kategorie.like("%음료%")).all()
+        #나중에 여기다 나머지 카테고리들 추가하기 (케이크 , 패스트푸드 , 밀키드 ,샌드위치)    
+        else:
+            # 다른 검색어의 경우 제품명에 검색어를 포함하는 제품 정보를 반환합니다.
+            products = Product.query.filter(Product.name.like(f"%{query}%")).all()
     else:
-        # 검색어와 일치하는 제품 찾기
-        products = Product.query.filter(Product.name.like(f"%{query}%")).all()
-        
+        # 바코드와 검색어가 모두 없는 경우 모든 제품 정보를 반환합니다.
+        products = Product.query.all()
+
+    shuffle(products) #랜덤으로 보여줌
+
     product_list = []
     for product in products:
         product_data = {
@@ -80,6 +91,38 @@ def get_products():
         }
         product_list.append(product_data)
     return jsonify(product_list)
+
+
+@app.route('/scan', methods=['GET'])
+def scan_products():
+    query = request.args.get('query', '')
+    barcode = request.args.get('barcode', '')
+
+    if barcode:
+        # 바코드가 있는 경우 바코드에 해당하는 제품 정보를 반환합니다.
+        products = Product.query.filter_by(barcode=barcode).all()
+    elif query:
+        # 검색어가 있는 경우 검색어를 포함하는 제품 정보를 반환합니다.
+        products = Product.query.filter(Product.name.like(f"%{query}%")).all()
+
+    else:
+        # 바코드와 검색어가 모두 없는 경우 모든 제품 정보를 반환합니다.
+        products = Product.query.all()
+
+    product_list = []
+    for product in products:
+        product_data = {
+            'id': product.id,
+            'barcode': product.barcode,
+            'name': product.name,
+            'kategorie': product.kategorie,
+            'frontproduct': product.frontproduct,
+            'backproduct': product.backproduct,
+            'allergens': product.allergens
+        }
+        product_list.append(product_data)
+    return jsonify(product_list)
+
 
 # 라우팅: 제품 추가
 @app.route('/add', methods=['POST'])

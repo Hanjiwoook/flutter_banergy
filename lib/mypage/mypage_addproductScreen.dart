@@ -1,11 +1,11 @@
-// ignore: file_names
-import 'package:flutter/foundation.dart';
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'package:flutter_tesseract_ocr/flutter_tesseract_ocr.dart';
-import 'package:flutter_banergy/bottombar.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MaterialApp(
@@ -14,167 +14,106 @@ void main() {
 }
 
 class AddProductScreen extends StatefulWidget {
-  final File? image;
-
-  const AddProductScreen({super.key, this.image});
+  const AddProductScreen({super.key});
 
   @override
-  State<AddProductScreen> createState() => _MyAppState();
+  _AddProductScreenState createState() => _AddProductScreenState();
 }
 
-class _MyAppState extends State<AddProductScreen> {
-  late File? _image;
-  final ImagePicker picker = ImagePicker();
-  String parsedText = '';
+class _AddProductScreenState extends State<AddProductScreen> {
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
+  final TextEditingController _addtitleController = TextEditingController();
+  final TextEditingController _addcontentController = TextEditingController();
 
-  get langs => null; // 추가: 이미지에서 추출된 텍스트를 저장할 변수
+  Future<void> _getImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
 
-  // 이미지 가져오기
-  /*Future getImage(ImageSource imageSource) async {
-    final pickedFile = await picker.pickImage(source: imageSource);
-
-
-    if (pickedFile != null) {
-      setState(() {
+    setState(() {
+      if (pickedFile != null) {
         _image = File(pickedFile.path);
-      });
-
-      // 선택된 이미지로 OCR 수행
-      _ocr(_image!.path);
-    }
-  }*/
-  Future _getImageAndPerformOCR(ImageSource imageSource) async {
-    final pickedFile = await picker.pickImage(source: imageSource);
-
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-
-      // 선택된 이미지로 OCR 수행
-      _ocr(_image!.path);
-    }
+      }
+    });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _image = widget.image;
-  }
+  Future<void> _addProduct(BuildContext context) async {
+    final String addtitle = _addtitleController.text;
+    final String addcontent = _addcontentController.text;
 
-  // getImage 함수 안에서 사용될 변수들을 함수 밖으로 이동
-  late XFile? pickedFile;
-  late String img64;
-
-  // 새로 해보는 이미지 가져오기
-  void runFilePicker(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
-
-    if (pickedFile != null) {
-      _ocr(pickedFile.path);
-    }
-  }
-
-  // OCR 수행
-  void _ocr(String imagePath) async {
     try {
-      // If the imagePath is a remote image, download it and save locally
-      if (!kIsWeb &&
-          (imagePath.startsWith("http://") ||
-              imagePath.startsWith("https://"))) {}
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('http://192.168.1.174:6000/add'),
+      );
 
-      // Set the loading state to true
-      setState(() {});
+      // 이미지 파일 추가
+      if (_image != null) {
+        var imageStream = http.ByteStream(_image!.openRead());
+        var length = await _image!.length();
+        var multipartFile = http.MultipartFile(
+          'image',
+          imageStream,
+          length,
+          filename: _image!.path.split('/').last,
+        );
+        request.files.add(multipartFile);
+      }
 
-      // Perform OCR using flutter_tesseract_ocr
-      var ocrText =
-          await FlutterTesseractOcr.extractText(imagePath, language: 'kor');
+      // 텍스트 데이터 추가
+      request.fields['addtitle'] = addtitle;
+      request.fields['addcontent'] = addcontent;
 
-      // Set the loading state to false
-      setState(() {
-        parsedText = ocrText;
-      });
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        // 성공 시
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text('확인 후 업로드 될 예정입니다'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                    //Navigator.push(
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MypageApp(),
+                      ),
+                    );
+                  },
+                  child: const Text('확인'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // 실패 시
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text('다시 한번 확인해주세요'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                  },
+                  child: const Text('확인'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     } catch (e) {
-      print('OCR failed: $e');
-      // Handle the OCR failure, show a message, or take appropriate action
+      // 오류 발생 시
+      print('서버에서 오류가 발생했음: $e');
     }
   }
-
-  Widget _buildPhotoArea() {
-    return _image != null
-        ? Column(
-            children: [
-              SizedBox(
-                width: 300,
-                height: 300,
-                child: Image.file(_image!),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                '식품 성분',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: 300, // 원하는 최대 너비 설정
-                ),
-                child: RichText(
-                  text: TextSpan(
-                    text: parsedText,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black, // 일반 텍스트 색상
-                    ),
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _showDialog(parsedText);
-                },
-                child: const Text('자세히 보기'),
-              ),
-            ],
-          )
-        : Container(
-            width: 300,
-            height: 300,
-            color: Colors.grey,
-          );
-  }
-
-  void _showDialog(String text) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('상품 정보'),
-          content: SingleChildScrollView(
-            child: Text(text),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('상품 추가하기'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-/*
-  ElevatedButton _buildElevatedButton(String label, ImageSource imageSource) {
-    return ElevatedButton(
-      onPressed: () {
-        getImage(imageSource);
-      },
-      child: Text(label),
-    );
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -185,10 +124,7 @@ class _MyAppState extends State<AddProductScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MypageApp()),
-            );
+            Navigator.pop(context);
           },
         ),
       ),
@@ -205,22 +141,22 @@ class _MyAppState extends State<AddProductScreen> {
                   width: 80,
                   height: 80,
                 ),
-                //const SizedBox(height: 30),
+                const SizedBox(height: 20),
                 const Text(
                   '상품추가',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
-                const InputField(label: '제목', hintText: '제목을 입력하세요'),
-                const SizedBox(height: 20),
-                const InputField(
-                  label: '상품 내용',
-                  hintText: '간단한 상품 내용을 적어주세요.',
+                InputField(
+                  label: '제목',
+                  hintText: '제목을 입력하세요',
+                  controller: _addtitleController,
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  '최대한 공백이 없어야 인식이 잘됩니다.',
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                InputField(
+                  label: '상품 내용',
+                  hintText: '간단한 상품 내용을 적어주세요.',
+                  controller: _addcontentController,
                 ),
                 const SizedBox(height: 20),
                 _buildPhotoArea(),
@@ -228,34 +164,37 @@ class _MyAppState extends State<AddProductScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(width: 8),
                     ElevatedButton.icon(
                       onPressed: () {
-                        _getImageAndPerformOCR(ImageSource.camera);
+                        _getImage(ImageSource.camera);
                       },
-                      icon: const Icon(Icons.camera_alt, color: Colors.grey),
+                      icon: const Icon(Icons.camera_alt, color: Colors.white),
                       label: const Text("카메라",
-                          style: TextStyle(color: Colors.grey)),
+                          style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            const Color.fromARGB(255, 255, 254, 254),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        minimumSize: const Size(120, 0),
+                            const Color.fromARGB(255, 29, 171, 102),
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(color: Color(0xFFEBEBEB)),
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 30),
+                    const SizedBox(width: 15), // 간격 조절
                     ElevatedButton.icon(
                       onPressed: () {
-                        _getImageAndPerformOCR(ImageSource.gallery);
+                        _getImage(ImageSource.gallery);
                       },
-                      icon: const Icon(Icons.perm_media, color: Colors.grey),
+                      icon: const Icon(Icons.perm_media, color: Colors.white),
                       label: const Text("갤러리",
-                          style: TextStyle(color: Colors.grey)),
+                          style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            const Color.fromARGB(255, 255, 255, 255),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        minimumSize: const Size(120, 0),
+                            const Color.fromARGB(255, 29, 171, 102),
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(color: Color(0xFFEBEBEB)),
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
                       ),
                     ),
                   ],
@@ -267,13 +206,57 @@ class _MyAppState extends State<AddProductScreen> {
       ),
     );
   }
+
+  Widget _buildPhotoArea() {
+    if (_image != null) {
+      return Column(
+        children: [
+          SizedBox(
+            width: 300,
+            height: 300,
+            child: Image.file(_image!),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+            onPressed: () {
+              if (_image != null) {
+                _addProduct(context);
+              }
+            },
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text("추가하기", style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              fixedSize: const Size(double.infinity, 45),
+              backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: Color(0xFFEBEBEB)),
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Container(
+        width: 300,
+        height: 300,
+        color: Colors.grey,
+      );
+    }
+  }
 }
 
 class InputField extends StatelessWidget {
   final String label;
   final String hintText;
+  final TextEditingController? controller;
 
-  const InputField({super.key, required this.label, this.hintText = ""});
+  const InputField({
+    super.key,
+    required this.label,
+    this.hintText = "",
+    this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -284,20 +267,22 @@ class InputField extends StatelessWidget {
           label,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 8), // 간격 조절을 위한 SizedBox 추가
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30.0), // 모서리를 둥글게 설정
-            border: Border.all(color: Colors.grey), // 테두리 색상 설정
+            borderRadius: BorderRadius.circular(30.0),
+            border: Border.all(color: Colors.grey),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: TextField(
+              controller: controller,
               decoration: InputDecoration(
                 hintText: hintText,
-                border: InputBorder.none, // 테두리 제거
+                border: InputBorder.none,
               ),
-              style: const TextStyle(color: Colors.grey), // 텍스트 색상 설정
+              style: const TextStyle(
+                  color: Colors.black, fontWeight: FontWeight.bold),
             ),
           ),
         ),

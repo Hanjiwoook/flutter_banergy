@@ -6,7 +6,7 @@ import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
-import 'package:permission_handler/permission_handler.dart';
+//import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(
@@ -82,7 +82,7 @@ class _ProductGridState extends State<ProductGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://172.16.107.66:8000/'),
+      Uri.parse('http://172.30.1.96:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {

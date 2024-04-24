@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
 import '../mypage/mypage.dart';
 
-void main() {
+/*void main() {
   runApp(const MaterialApp(
     home: Delete(),
   ));
-}
+}*/
 
 class Delete extends StatelessWidget {
   const Delete({Key? key}) : super(key: key);

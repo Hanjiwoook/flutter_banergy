@@ -51,7 +51,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     }
   }
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'My',
-            activeIcon: Icon(Icons.person, color: Colors.grey)),
+            activeIcon: Icon(Icons.person, color: Colors.green)),
       ],
       onTap: (index) async {
         setState(() {
@@ -93,7 +93,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       onPressed: () async {
                         // 추가: 카메라 권한 확인 및 요청
                         var cameraStatus = await Permission.camera.status;
-
                         if (!cameraStatus.isGranted) {
                           await Permission.camera.request();
                         }
@@ -127,12 +126,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
-                        // 갤러리 접근 권한 확인
-                        var galleryStatus = await Permission.photos.status;
-                        // 권한이 부여되어 있지 않으면 요청
-                        if (!galleryStatus.isGranted) {
-                          await Permission.photos.request();
-                        }
                         final pickedFile = await _imagePicker.pickImage(
                             source: ImageSource.gallery) as XFile;
 

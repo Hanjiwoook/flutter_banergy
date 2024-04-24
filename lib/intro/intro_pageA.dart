@@ -12,41 +12,86 @@ class IntroPageA extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 60,
+              const SizedBox(height: 60),
+              Padding(
+                padding: const EdgeInsets.only(right: 40.0), // 왼쪽 패딩 추가
+                child: RichText(
+                  textAlign: TextAlign.left,
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '알레르기',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Color(0xFF03C95B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '로\n',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Color(0xFF3F3B3B), // 검정색
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '마음대로 먹지도\n',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Color(0xFF3F3B3B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '못하는 당신을 위한\n',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Color(0xFF3F3B3B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '맞춤형 관리 앱',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Color(0xFF3F3B3B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              const Text(
-                '밴러지',
-                style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green),
-              ),
-              const SizedBox(
-                height: 60,
-              ),
-              Image.asset('images/000.jpeg', width: 200, height: 200),
-              const Text(
-                '알러지로 마음대로 먹지도\n못하는 당신을 위한 맞춤형\n관리 앱',
-                style: TextStyle(fontSize: 18),
-              ),
-              Image.asset('images/intropage1.png', width: 100, height: 100),
+              const SizedBox(height: 300),
+              Image.asset('images/intropage1.png', width: 150, height: 100),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      controller.animateToPage(1,
-                          duration: const Duration(milliseconds: 700),
-                          curve: Curves.easeOut);
-                    },
-                    child: Text(
-                      '다음',
-                      style: const TextStyle(color: Colors.white),
+                  Container(
+                    width: 100,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF03C95B),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    style: TextButton.styleFrom(backgroundColor: Colors.green),
+                    child: TextButton(
+                      onPressed: () {
+                        controller.animateToPage(1,
+                            duration: const Duration(milliseconds: 700),
+                            curve: Curves.easeOut);
+                      },
+                      child: const Text(
+                        '다음',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'PretendardSemiBold',
+                          fontSize: 25,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

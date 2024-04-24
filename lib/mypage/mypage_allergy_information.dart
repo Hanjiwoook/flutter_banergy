@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/bottombar.dart';
 
-void main() {
+/*void main() {
   runApp(const allergyinformation());
-}
+}*/
 
 class allergyinformation extends StatelessWidget {
   const allergyinformation({super.key});

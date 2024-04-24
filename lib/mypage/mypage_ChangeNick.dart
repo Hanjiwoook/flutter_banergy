@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
+//import 'package:flutter_banergy/main.dart';
 import '../mypage/mypage.dart';
 
-void main() {
+/*void main() {
   runApp(const MaterialApp(
     home: ChangeNick(),
   ));
-}
+}*/
 
 class ChangeNick extends StatefulWidget {
   const ChangeNick({Key? key}) : super(key: key);
@@ -108,6 +108,7 @@ class InputField extends StatelessWidget {
 
   const InputField({required this.label, this.hintText = ""});
 
+// 글상자
   @override
   Widget build(BuildContext context) {
     return Column(

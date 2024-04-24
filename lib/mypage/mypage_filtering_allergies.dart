@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/bottombar.dart';
 
-void main() {
+/*void main() {
   runApp(const FilteringAllergies());
-}
+}*/
 
 class FilteringAllergies extends StatelessWidget {
   const FilteringAllergies({super.key});

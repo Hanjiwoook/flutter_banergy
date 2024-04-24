@@ -8,48 +8,95 @@ class IntroPageB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            SizedBox(
-              height: 60,
-            ),
-            Text(
-              '밴러지',
-              style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green),
-            ),
-            SizedBox(
-              height: 60,
-            ),
-            Image.asset('images/000.jpeg', width: 200, height: 200),
-            Text(
-              '필터링 서비스로 개인이\n원하는 정보만 빠르게 확인!',
-              style: TextStyle(fontSize: 13),
-            ),
-            Image.asset('images/intropage2.png', width: 100, height: 100),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    controller.animateToPage(2,
-                        duration: Duration(milliseconds: 700),
-                        curve: Curves.easeOut);
-                  },
-                  child: Text(
-                    '다음',
-                    style: const TextStyle(color: Colors.white),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 60),
+              Padding(
+                padding: const EdgeInsets.only(right: 85.0), // 왼쪽 패딩 추가
+                child: RichText(
+                  textAlign: TextAlign.left,
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '필터링 ',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Color(0xFF03C95B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '서비스로\n',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Color(0xFF3F3B3B), // 검정색
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '개인이\n',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Color(0xFF3F3B3B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '원하는 정보만\n',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Color(0xFF3F3B3B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '빠르게 확인',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Color(0xFF3F3B3B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                    ],
                   ),
-                  style: TextButton.styleFrom(backgroundColor: Colors.green),
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 300),
+              Image.asset('images/intropage2.png', width: 150, height: 100),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    width: 200,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF03C95B),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        controller.animateToPage(2,
+                            duration: const Duration(milliseconds: 700),
+                            curve: Curves.easeOut);
+                      },
+                      child: const Text(
+                        '다음',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'PretendardSemiBold',
+                          fontSize: 25,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,4 +1,4 @@
-// 아이콘 슬라이더 미들웨어
+//아이콘 슬라이더 미들웨어
 
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
@@ -90,7 +90,7 @@ class _IconItemState extends State<IconItem> {
       case '라면':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const RamenScreen()),
+          MaterialPageRoute(builder: (context) => const ramenScreen()),
         );
         break;
       case '음료':
@@ -102,31 +102,31 @@ class _IconItemState extends State<IconItem> {
       case '김밥류':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const GimbapScreen()),
+          MaterialPageRoute(builder: (context) => const gimbapScreen()),
         );
         break;
       case '도시락':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const LunchboxScreen()),
+          MaterialPageRoute(builder: (context) => const lunchboxScreen()),
         );
         break;
       case '과자류':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const BigsnacksScreen()),
+          MaterialPageRoute(builder: (context) => const bigsnacksScreen()),
         );
         break;
       case '간식류':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const SnacksScreen()),
+          MaterialPageRoute(builder: (context) => const snacksScreen()),
         );
         break;
       case '즉석식품':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const InstantfoodScreen()),
+          MaterialPageRoute(builder: (context) => const instantfoodScreen()),
         );
         break;
       case '샌드위치':

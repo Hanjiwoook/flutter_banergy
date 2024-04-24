@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
+//import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard_write_screen.dart';
 
 void main() {
@@ -41,7 +41,8 @@ class Freeboard extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Freeboard_WriteScreen()),
+            MaterialPageRoute(
+                builder: (context) => const Freeboard_WriteScreen()),
           );
         },
         child: Icon(Icons.add),

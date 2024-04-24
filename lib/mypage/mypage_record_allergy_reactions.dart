@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
-import 'package:flutter_banergy/bottombar.dart';
+import 'package:flutter_banergy/mypage/mypagebottom.dart';
 
-void main() {
+/*void main() {
   runApp(const Recordallergyreactions());
-}
+}*/
 
 class Recordallergyreactions extends StatelessWidget {
   const Recordallergyreactions({Key? key});
@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage>
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MypageApp()),
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
             );
           },
         ),

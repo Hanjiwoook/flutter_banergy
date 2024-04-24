@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/search_widget.dart';
+import 'package:flutter_banergy/appbar/search_Widget.dart';
 import 'package:flutter_banergy/bottombar.dart';
-import 'package:flutter_banergy/main_category/iconslider.dart';
+import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/mainDB.dart';
 
-class InstantfoodScreen extends StatelessWidget {
-  const InstantfoodScreen({super.key});
+class instantfoodScreen extends StatelessWidget {
+  const instantfoodScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class _DessertGridState extends State<DessertGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.216.174:8000/?query=패스트푸드'),
+      Uri.parse('http://192.168.1.174:8000/?query=패스트푸드'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -81,9 +81,11 @@ class _DessertGridState extends State<DessertGrid> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Image.network(
-                    products[index].frontproduct,
-                    fit: BoxFit.cover,
+                  child: Center(
+                    child: Image.network(
+                      products[index].frontproduct,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8.0),

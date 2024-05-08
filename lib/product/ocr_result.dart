@@ -31,7 +31,7 @@ class _OcrresultState extends State<Ocrresult> {
 
   Future<void> _getOCRResult() async {
     try {
-      final url = Uri.parse('http://192.168.1.174:7000/result');
+      final url = Uri.parse('http://172.16.98.4:7000/result');
       var response = await http.get(url);
 
       if (response.statusCode == 200) {

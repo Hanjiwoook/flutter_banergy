@@ -69,7 +69,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'My',
-            activeIcon: Icon(Icons.person, color: Colors.grey)),
+            activeIcon: Icon(Icons.person, color: Colors.green)),
       ],
       onTap: (index) async {
         setState(() {

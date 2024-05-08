@@ -8,6 +8,9 @@ class IntroPageC extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    double textSize = screenWidth * 0.09;
+
     return SafeArea(
       child: Center(
         child: Padding(
@@ -17,15 +20,15 @@ class IntroPageC extends StatelessWidget {
             children: [
               const SizedBox(height: 60),
               Padding(
-                padding: const EdgeInsets.only(right: 10.0), // 왼쪽 패딩 추가
+                padding: const EdgeInsets.only(right: 40.0),
                 child: RichText(
                   textAlign: TextAlign.left,
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
                       TextSpan(
                         text: 'OCR ',
                         style: TextStyle(
-                          fontSize: 40,
+                          fontSize: textSize,
                           color: Color(0xFF03C95B),
                           fontFamily: 'PretendardBold',
                         ),
@@ -33,7 +36,7 @@ class IntroPageC extends StatelessWidget {
                       TextSpan(
                         text: ',',
                         style: TextStyle(
-                          fontSize: 40,
+                          fontSize: textSize,
                           color: Color(0xFF3F3B3B), // 검정색
                           fontFamily: 'PretendardBold',
                         ),
@@ -41,15 +44,15 @@ class IntroPageC extends StatelessWidget {
                       TextSpan(
                         text: ' 바코드 ',
                         style: TextStyle(
-                          fontSize: 40,
+                          fontSize: textSize,
                           color: Color(0xFF03C95B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
                       TextSpan(
-                        text: '기술로 \n  ',
+                        text: '기술로 \n',
                         style: TextStyle(
-                          fontSize: 40,
+                          fontSize: textSize,
                           color: Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
@@ -57,7 +60,7 @@ class IntroPageC extends StatelessWidget {
                       TextSpan(
                         text: '간편하게\n',
                         style: TextStyle(
-                          fontSize: 40,
+                          fontSize: textSize,
                           color: Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
@@ -65,7 +68,7 @@ class IntroPageC extends StatelessWidget {
                       TextSpan(
                         text: '찾아보는 음식 성분들!',
                         style: TextStyle(
-                          fontSize: 40,
+                          fontSize: textSize,
                           color: Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),

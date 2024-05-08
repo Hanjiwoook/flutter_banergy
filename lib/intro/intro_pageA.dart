@@ -7,6 +7,9 @@ class IntroPageA extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    double textSize = screenWidth * 0.10;
+
     return SafeArea(
       child: Center(
         child: Padding(
@@ -16,48 +19,48 @@ class IntroPageA extends StatelessWidget {
             children: [
               const SizedBox(height: 60),
               Padding(
-                padding: const EdgeInsets.only(right: 40.0), // 왼쪽 패딩 추가
+                padding: const EdgeInsets.only(right: 40.0),
                 child: RichText(
                   textAlign: TextAlign.left,
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
                       TextSpan(
                         text: '알레르기',
                         style: TextStyle(
-                          fontSize: 40,
-                          color: Color(0xFF03C95B),
+                          fontSize: textSize,
+                          color: const Color(0xFF03C95B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
                       TextSpan(
                         text: '로\n',
                         style: TextStyle(
-                          fontSize: 40,
-                          color: Color(0xFF3F3B3B), // 검정색
+                          fontSize: textSize,
+                          color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
                       TextSpan(
                         text: '마음대로 먹지도\n',
                         style: TextStyle(
-                          fontSize: 40,
-                          color: Color(0xFF3F3B3B),
+                          fontSize: textSize,
+                          color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
                       TextSpan(
                         text: '못하는 당신을 위한\n',
                         style: TextStyle(
-                          fontSize: 40,
-                          color: Color(0xFF3F3B3B),
+                          fontSize: textSize,
+                          color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
                       TextSpan(
                         text: '맞춤형 관리 앱',
                         style: TextStyle(
-                          fontSize: 40,
-                          color: Color(0xFF3F3B3B),
+                          fontSize: textSize,
+                          color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),

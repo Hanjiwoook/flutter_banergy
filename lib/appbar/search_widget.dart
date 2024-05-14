@@ -50,29 +50,35 @@ class _SearchWidgetState extends State<SearchWidget> {
                     color: const Color(0xFFEEEEEE),
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: '궁금했던 상품 정보를 검색해보세요',
-                      border: InputBorder.none, // 선 없애기
-                      contentPadding:
-                          const EdgeInsets.only(left: 10, bottom: 10),
+                  child: Center(
+                    // 중앙 정렬을 위해 Center 위젯 추가
+                    child: TextField(
+                      controller: _searchController,
+                      style: const TextStyle(
+                        fontFamily: 'PretendardBold',
+                      ),
+                      decoration: InputDecoration(
+                        hintText: '궁금했던 상품 정보를 검색해보세요',
+                        border: InputBorder.none, // 선 없애기
+                        contentPadding: const EdgeInsets.only(
+                            left: 30, bottom: 13), // 여기서 bottom 값을 음수로 조정
 
-                      suffixIcon: IconButton(
-                        onPressed: _onSearchPressed,
-                        icon: const Icon(
-                          Icons.search,
-                          size: 20,
+                        suffixIcon: IconButton(
+                          onPressed: _onSearchPressed,
+                          icon: const Icon(
+                            Icons.search,
+                            size: 20,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              /*IconButton(
+                /*IconButton(
                 onPressed: _onMenuPressed,
                 icon: const Icon(Icons.menu),
               ),*/
+              )
             ],
           ),
         ),
@@ -141,7 +147,7 @@ class _SearchWidgetState extends State<SearchWidget> {
     });
 
     final response =
-        await http.get(Uri.parse('http://172.16.98.4:8000/?query=$query'));
+        await http.get(Uri.parse('http://172.16.97.105:8000/?query=$query'));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       setState(() {

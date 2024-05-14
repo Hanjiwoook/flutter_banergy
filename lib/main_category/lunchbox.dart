@@ -52,7 +52,7 @@ class _DessertGridState extends State<DessertGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://172.16.98.4:8000/?query=밀키트'),
+      Uri.parse('http://172.16.97.105:8000/?query=밀키트'),
     );
     if (response.statusCode == 200) {
       setState(() {

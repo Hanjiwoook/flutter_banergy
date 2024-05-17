@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/Search_Widget.dart';
 import 'package:flutter_banergy/login/login_login.dart';
-import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
 import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
+import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('http://172.16.97.159:3000/ocr');
+    final url = Uri.parse('http://172.30.1.96:3000/ocr');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $authToken';
     request.files
@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen>
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://172.16.97.105:3000/loginuser'),
+        Uri.parse('http:/172.30.1.96:3000/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200;
@@ -185,7 +185,10 @@ class _HomeScreenState extends State<HomeScreen>
 
                 return GestureDetector(
                   onTap: () {
-                    _navigateToScreen(context, category["name"]!);
+                    _navigateToScreen(
+                      context,
+                      category["name"]!,
+                    );
                   },
                   child: SizedBox(
                     width: 100,
@@ -204,7 +207,8 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                           ),
                           Text('${category["name"]}', // 카테고리 이름 라벨
-                              style: const TextStyle(fontSize: 12)),
+                              style: const TextStyle(
+                                  fontSize: 12, fontFamily: 'PretendardBold')),
                         ],
                       ),
                     ),
@@ -421,16 +425,16 @@ class _HomeScreenState extends State<HomeScreen>
     Widget? screen;
     switch (categoryName) {
       case '라면':
-        screen = const ramenScreen();
+        screen = const RamenScreen();
         break;
       case '패스트푸드':
-        screen = const instantfoodScreen();
+        screen = const InstantfoodScreen();
         break;
       case '김밥':
-        screen = const gimbapScreen();
+        screen = const GimbapScreen();
         break;
       case '도시락':
-        screen = const lunchboxScreen();
+        screen = const LunchboxScreen();
         break;
       case '샌드위치':
         screen = const SandwichScreen();
@@ -442,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen>
         screen = const snacksScreen();
         break;
       case '과자':
-        screen = const bigsnacksScreen();
+        screen = const BigsnacksScreen();
         break;
     }
     if (screen != null) {
@@ -533,7 +537,7 @@ class _ProductGridState extends State<ProductGrid> {
   // 상품 데이터를 가져오는 비동기 함수
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://172.16.97.105:8000/'),
+      Uri.parse('http://172.30.1.96:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -608,115 +612,13 @@ class _ProductGridState extends State<ProductGrid> {
     );
   }
 
-  // 상품 클릭 시 팝업 다이얼로그를 열고 상품 정보를 표시하는 함수
+  // 상품 클릭 시 새로운창에서 상품 정보를 표시하는 함수
   void _handleProductClick(BuildContext context, Product product) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('상품 정보'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('카테고리: ${product.kategorie}'),
-                Text('이름: ${product.name}'),
-                GestureDetector(
-                  onTap: () {
-                    // 확대 이미지
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          content: Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              PhotoView(
-                                imageProvider:
-                                    NetworkImage(product.frontproduct),
-                                minScale:
-                                    PhotoViewComputedScale.contained * 1.0,
-                                maxScale: PhotoViewComputedScale.covered * 2.0,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pop(); // 다이얼로그 닫기
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white.withOpacity(0.5),
-                                  ),
-                                  child: const Icon(Icons.close),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Image.network(
-                    product.frontproduct,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // 확대 이미지
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          content: Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              PhotoView(
-                                imageProvider:
-                                    NetworkImage(product.backproduct),
-                                minScale:
-                                    PhotoViewComputedScale.contained * 1.0,
-                                maxScale: PhotoViewComputedScale.covered * 2.0,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pop(); // 다이얼로그 닫기
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white.withOpacity(0.5),
-                                  ),
-                                  child: const Icon(Icons.close),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Image.network(
-                    product.backproduct,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Text('알레르기 식품: ${product.allergens}'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('닫기'),
-            ),
-          ],
-        );
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => pdScreen(product: product),
+      ),
     );
   }
 }

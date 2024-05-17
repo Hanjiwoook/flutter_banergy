@@ -143,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 탈퇴하기 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Delete()),
+          MaterialPageRoute(builder: (context) => const Delete()),
         );
         break;
 

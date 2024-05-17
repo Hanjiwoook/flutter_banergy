@@ -30,7 +30,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://172.16.97.105:8000/?query=$searchText'),
+      Uri.parse('http://172.30.1.96:8000/?query=$searchText'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -52,22 +52,22 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ],
       ),
-      body: serachGrid(products: products),
+      body: SerachGrid(products: products),
       bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
 
-class serachGrid extends StatefulWidget {
+class SerachGrid extends StatefulWidget {
   final List<Product> products;
 
-  const serachGrid({super.key, required this.products});
+  const SerachGrid({super.key, required this.products});
 
   @override
-  State<serachGrid> createState() => _serachGridState();
+  State<SerachGrid> createState() => _SerachGridState();
 }
 
-class _serachGridState extends State<serachGrid> {
+class _SerachGridState extends State<SerachGrid> {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(

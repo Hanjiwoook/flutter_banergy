@@ -3,107 +3,150 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Ocrresult extends StatefulWidget {
   final String imagePath;
   final String ocrResult;
 
   const Ocrresult({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.ocrResult,
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _OcrresultState createState() => _OcrresultState();
 }
 
 class _OcrresultState extends State<Ocrresult> {
   late String _ocrResult;
+  late String _hirightingResult;
   bool isOcrInProgress = true;
+  String? authToken;
 
   @override
   void initState() {
     super.initState();
     _ocrResult = widget.ocrResult;
-    _getOCRResult();
+    _hirightingResult = widget.ocrResult;
+    _checkLoginStatus();
   }
 
-  Future<void> _getOCRResult() async {
+  Future<void> _checkLoginStatus() async {
+    final token = await _loginuser();
+    if (token != null) {
+      final isValid = await _validateToken(token);
+      if (isValid) {
+        setState(() {
+          authToken = token;
+        });
+        await _getOCRResult(token);
+        await _getUserAllergies(token); // 알레르기 정보 가져오기 추가
+      } else {
+        setState(() {
+          authToken = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _getUserAllergies(String token) async {
     try {
-      final url = Uri.parse('http://172.30.1.2:7000/result');
-      var response = await http.get(url);
+      final url = Uri.parse('http://172.30.1.96:3000/loginuser');
+      var response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        List<String> allergies = data['allergies'].cast<String>();
+        print('사용자 알레르기 : $allergies');
+
+        // 알레르기 정보를 저장
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setStringList('allergies', allergies);
+      } else {
+        print('Failed to fetch user allergies: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error occurred while fetching user allergies: $e');
+    }
+  }
+
+  Future<String?> _loginuser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken');
+    return token;
+  }
+
+  Future<bool> _validateToken(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.121.174:3000/loginuser'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Error validating token: $e');
+      return false;
+    }
+  }
+
+  //  OCR 결과
+  Future<void> _getOCRResult(String token) async {
+    try {
+      final url = Uri.parse('http://192.168.121.174:3000/result');
+      var response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         List<String> ocrResult = (data['text'] as List).cast<String>();
 
-        List<String> highlightWords = [
-          "계란",
-          "밀",
-          "대두",
-          "우유",
-          "게",
-          "새우",
-          "돼지고기",
-          "닭고기",
-          "소고기",
-          "고등어",
-          "복숭아",
-          "토마토",
-          "호두",
-          "잣",
-          "땅콩",
-          "아몬드",
-          "조개류",
-          "기타"
-        ];
+        // // 사용자의 알레르기 정보
+        // final SharedPreferences prefs = await SharedPreferences.getInstance();
+        // final userAllergies = prefs.getStringList('allergies') ?? [];
 
-        List<TextSpan> highlightedSpans = [];
+// 정규 표현식을 사용하여 사용자의 알레르기 정보와 일치하는 부분 추출
+        RegExp regex = RegExp(r'『(.*?)』');
+        List<String> highlightingTexts = [];
         for (String line in ocrResult) {
-          for (String word in highlightWords) {
-            if (line.contains(word)) {
-              int startIndex = line.indexOf(word);
-              int endIndex = startIndex + word.length;
-              String beforeHighlight = line.substring(0, startIndex);
-              String highlightedWord = line.substring(startIndex, endIndex);
-              String afterHighlight = line.substring(endIndex);
-              highlightedSpans.add(TextSpan(
-                text: beforeHighlight,
-                style: const TextStyle(color: Colors.black),
-              ));
-              highlightedSpans.add(TextSpan(
-                text: highlightedWord,
-                style: const TextStyle(
-                  backgroundColor: Colors.yellow,
-                  fontWeight: FontWeight.bold,
-                ),
-              ));
-              line = afterHighlight;
-            }
-          }
-          highlightedSpans.add(TextSpan(
-            text: line,
-            style: const TextStyle(color: Colors.black),
-          ));
+          highlightingTexts.addAll(regex
+                  .allMatches(line)
+                  .map((match) => match.group(1) ?? '') // null일 경우 빈 문자열 반환
+              //       //.where((highlightedWord) => userAllergies
+              //           .contains(highlightedWord)) // 사용자 알레르기 정보와 일치하는 것만 필터링
+              //       .toList(),
+              );
         }
+
+        String highlightingResult = highlightingTexts.join(', ');
+
+        String plainText = ocrResult.join(' ');
 
         setState(() {
-          _ocrResult = '';
+          _hirightingResult = highlightingResult.trim();
+          _ocrResult = plainText.trim();
         });
-        for (TextSpan span in highlightedSpans) {
-          setState(() {
-            _ocrResult += span.text!;
-          });
-        }
       } else {
         setState(() {
-          _ocrResult = 'Failed to fetch OCR result: ${response.statusCode}';
+          _hirightingResult = '';
         });
       }
     } catch (e) {
       setState(() {
-        _ocrResult = 'Error occurred: $e';
+        _hirightingResult = 'Error occurred: $e';
       });
     } finally {
       setState(() {
@@ -116,13 +159,18 @@ class _OcrresultState extends State<Ocrresult> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('상품 정보'),
+        title: const Text(
+          "OCR 결과",
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFF1F2F7),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MypageApp()),
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
             );
           },
         ),
@@ -141,18 +189,9 @@ class _OcrresultState extends State<Ocrresult> {
               ),
             ),
             const Divider(
-              color: Colors.grey,
-              thickness: 2.0,
+              color: Color(0xFFDDD7D7),
+              thickness: 1.0,
               height: 5.0,
-            ),
-            const Center(
-              child: Text(
-                'OCR 결과',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ),
             const SizedBox(height: 16),
             if (isOcrInProgress)
@@ -172,9 +211,29 @@ class _OcrresultState extends State<Ocrresult> {
             else
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(_ocrResult.isNotEmpty
-                    ? ' $_ocrResult'
-                    : 'No text detected'),
+                child: Column(
+                  children: [
+                    if (_hirightingResult.isNotEmpty)
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.yellow,
+                        ),
+                        child: Text(
+                          _hirightingResult,
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 20),
+                    if (_ocrResult.isNotEmpty)
+                      Text(
+                        _ocrResult,
+                      ),
+                    if (_hirightingResult.isEmpty && _ocrResult.isEmpty)
+                      const Text('No text detected'),
+                  ],
+                ),
               ),
             ElevatedButton(
               onPressed: () {

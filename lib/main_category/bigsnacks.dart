@@ -7,8 +7,8 @@ import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/mainDB.dart';
 
-class bigsnacksScreen extends StatelessWidget {
-  const bigsnacksScreen({super.key});
+class BigsnacksScreen extends StatelessWidget {
+  const BigsnacksScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class _DessertGridState extends State<DessertGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://172.16.97.105:8000/?query=과자'),
+      Uri.parse('http://172.30.1.96:8000/?query=과자'),
     );
     if (response.statusCode == 200) {
       setState(() {

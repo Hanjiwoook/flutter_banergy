@@ -1,9 +1,7 @@
-// appbar 검색하는 부분
+// 카테고리내에서 검색할 수 있는 위젯을 만들어서 붙이자..!
 
 import 'package:flutter/material.dart';
-//import 'package:flutter_banergy/appbar/menu.dart';
 import 'package:flutter_banergy/appbar/search.dart';
-//import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -74,10 +72,6 @@ class _SearchWidgetState extends State<SearchWidget> {
                     ),
                   ),
                 ),
-                /*IconButton(
-                onPressed: _onMenuPressed,
-                icon: const Icon(Icons.menu),
-              ),*/
               )
             ],
           ),

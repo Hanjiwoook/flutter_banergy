@@ -148,100 +148,102 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: const [
-          Flexible(
-            child: SearchWidget(), // 검색 위젯
-          ),
-        ],
+        title: const SearchWidget(), // 검색 위젯
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 220,
-            child: Stack(
-              children: [
-                sliderWidget(),
-                sliderIndicator(),
-              ],
-            ),
-          ),
-          // 공간추가, 카테고리 리스트
-          SizedBox(
-            height: 120, // 라벨을 포함하기에 충분한 높이 설정
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 8, // 카테고리 개수
-              itemBuilder: (BuildContext context, int index) {
-                // 카테고리 정보 (이름과 이미지 파일 이름)
-                List<Map<String, String>> categories = [
-                  {"name": "라면", "image": "001.png"},
-                  {"name": "패스트푸드", "image": "002.png"},
-                  {"name": "김밥", "image": "003.png"},
-                  {"name": "도시락", "image": "004.png"},
-                  {"name": "샌드위치", "image": "005.png"},
-                  {"name": "음료", "image": "006.png"},
-                  {"name": "간식", "image": "007.png"},
-                  {"name": "과자", "image": "008.png"},
-                ];
-
-                // 현재 카테고리
-                var category = categories[index];
-
-                return GestureDetector(
-                  onTap: () {
-                    _navigateToScreen(
-                      context,
-                      category["name"]!,
-                    );
-                  },
-                  child: SizedBox(
-                    width: 100,
-                    child: Container(
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          Expanded(
-                            child: Image.asset(
-                              'assets/images/${category["image"]}',
-                              width: 60, // 이미지의 너비
-                              height: 60, // 이미지의 높이
-                            ),
-                          ),
-                          Text('${category["name"]}', // 카테고리 이름 라벨
-                              style: const TextStyle(
-                                  fontSize: 12, fontFamily: 'PretendardBold')),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          const Expanded(
-            child: ProductGrid(), // 상품 그리드
-          ),
-          if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시
-            Container(
-              alignment: Alignment.center,
-              color: Colors.black.withOpacity(0.5),
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 220,
+              child: Stack(
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 8),
-                  Text(
-                    '서버에 이미지 업로드 중... \n 최대 2~3분이 소요됩니다',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
+                  sliderWidget(),
+                  sliderIndicator(),
                 ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 120,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 8, // 카테고리 개수
+                itemBuilder: (BuildContext context, int index) {
+                  // 카테고리 정보 (이름과 이미지 파일 이름)
+                  List<Map<String, String>> categories = [
+                    {"name": "라면", "image": "001.png"},
+                    {"name": "패스트푸드", "image": "002.png"},
+                    {"name": "김밥", "image": "003.png"},
+                    {"name": "도시락", "image": "004.png"},
+                    {"name": "샌드위치", "image": "005.png"},
+                    {"name": "음료", "image": "006.png"},
+                    {"name": "간식", "image": "007.png"},
+                    {"name": "과자", "image": "008.png"},
+                  ];
+
+                  // 현재 카테고리
+                  var category = categories[index];
+
+                  return GestureDetector(
+                    onTap: () {
+                      _navigateToScreen(
+                        context,
+                        category["name"]!,
+                      );
+                    },
+                    child: SizedBox(
+                      width: 100,
+                      child: Container(
+                        margin: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: Image.asset(
+                                'assets/images/${category["image"]}',
+                                width: 60, // 이미지의 너비
+                                height: 60, // 이미지의 높이
+                              ),
+                            ),
+                            Text('${category["name"]}', // 카테고리 이름 라벨
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'PretendardBold')),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+
+          const ProductGrid(), // 상품 그리드
+
+          if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시
+            SliverToBoxAdapter(
+              child: Container(
+                alignment: Alignment.center,
+                color: Colors.black.withOpacity(0.5),
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 8),
+                    Text(
+                      '서버에 이미지 업로드 중... \n 최대 2~3분이 소요됩니다',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
         ],
@@ -577,43 +579,46 @@ class _ProductGridState extends State<ProductGrid> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
       ),
-      itemCount: products.length,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return Card(
-          child: InkWell(
-            onTap: () {
-              _handleProductClick(context, products[index]);
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Image.network(
-                      products[index].frontproduct,
-                      fit: BoxFit.cover,
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          return Card(
+            child: InkWell(
+              onTap: () {
+                _handleProductClick(context, products[index]);
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 110, // 이미지 높이 제한
+                    child: Center(
+                      child: Image.network(
+                        products[index].frontproduct,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  products[index].name,
-                  style: const TextStyle(
+                  const SizedBox(height: 8.0),
+                  Text(
+                    products[index].name,
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'PretendardRegular'), // 텍스트 크기와 별도로 다시 수정
-                ),
-                const SizedBox(height: 4.0),
-                Text(products[index].allergens),
-              ],
+                      fontFamily: 'PretendardRegular',
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(products[index].allergens),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+        childCount: products.length,
+      ),
     );
   }
 

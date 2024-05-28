@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //바텀 바 내용 구현
 class BottomNavBar extends StatefulWidget {
@@ -20,6 +21,7 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final ImagePicker _imagePicker = ImagePicker();
   final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
   String? code;
@@ -32,7 +34,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Future<void> _UploadImage(XFile pickedFile) async {
     // 이미지 업로드 및 OCR 수행
 
-    final url = Uri.parse('http://192.168.1.174:7000/ocr');
+    final url = Uri.parse('$baseUrl:7000/ocr');
     final request = http.MultipartRequest('POST', url);
     request.files
         .add(await http.MultipartFile.fromPath('image', pickedFile.path));

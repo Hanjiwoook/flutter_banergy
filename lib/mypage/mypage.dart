@@ -13,6 +13,7 @@ import 'package:flutter_banergy/mypage/mypage_record_allergy_reactions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../mypage/mypage_freeboard.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MypageApp extends StatelessWidget {
   const MypageApp({super.key});
@@ -34,6 +35,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late TabController _tabController;
   String? authToken;
   String? loginName;
@@ -68,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<String?> _fetchUserName(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://172.16.111.9:3000/loginuser'),
+        Uri.parse('$baseUrl:3000/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       if (response.statusCode == 200) {
@@ -99,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://172.16.111.9:3000/loginuser'),
+        Uri.parse('$baseUrl:3000/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200;
@@ -143,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 탈퇴하기 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const Delete()),
+          MaterialPageRoute(builder: (context) => Delete()),
         );
         break;
 
@@ -184,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage>
         centerTitle: true,
         backgroundColor: const Color(0xFFF1F2F7),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.push(
               context,

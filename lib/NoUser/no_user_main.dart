@@ -1,20 +1,18 @@
+// 비회원 메인 페이지
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/home_search_widget.dart';
-import 'package:flutter_banergy/login/login_login.dart';
-import 'package:flutter_banergy/mypage/mypage.dart';
-import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
+import 'package:flutter_banergy/NoUser/no_user_ocr_result.dart';
+import 'package:flutter_banergy/appbar/search_widget.dart';
 import 'package:flutter_banergy/product/code.dart';
-import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:photo_view/photo_view.dart';
+import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
 import 'package:flutter_banergy/main_category/gimbap.dart';
@@ -24,23 +22,20 @@ import 'package:flutter_banergy/main_category/instantfood.dart';
 import 'package:flutter_banergy/main_category/ramen.dart';
 import 'package:flutter_banergy/main_category/lunchbox.dart';
 import 'package:flutter_banergy/main_category/Sandwich.dart';
-// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Future<void> main() async {
-  await dotenv.load(fileName: ".env");
+void main() {
   runApp(
     const MaterialApp(
-      home: MainpageApp(),
+      home: NoUserMainpageApp(),
     ),
   );
 }
 
-// 앱의 메인 페이지를 빌드하는 StatelessWidget입니다.
-class MainpageApp extends StatelessWidget {
+class NoUserMainpageApp extends StatelessWidget {
   final File? image;
 
-  const MainpageApp({super.key, this.image});
+  const NoUserMainpageApp({super.key, this.image});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +45,6 @@ class MainpageApp extends StatelessWidget {
   }
 }
 
-// 홈 화면을 관리하는 StatefulWidget입니다.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -62,32 +56,24 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
-  String? authToken; // 사용자의 인증 토큰
-  final ImagePicker _imagePicker = ImagePicker(); // 이미지 피커 인스턴스
-  final _qrBarCodeScannerDialogPlugin =
-      QrBarCodeScannerDialog(); // QR/바코드 스캐너 플러그인 인스턴스
-  String? code; // 바코드
-  String resultCode = ''; // 스캔된 바코드 결과
-  String ocrResult = ''; // OCR 결과
-  bool isOcrInProgress = false; // OCR 작업 진행 여부
-  final picker = ImagePicker(); // 이미지 피커 인스턴스
-  late String img64; // 이미지를 Base64로 인코딩한 결과
+  String? authToken;
+  final ImagePicker _imagePicker = ImagePicker();
+  final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
+  String? code;
+  String resultCode = '';
+  String ocrResult = '';
+  bool isOcrInProgress = false;
+  final picker = ImagePicker();
+  late String img64;
 
-  @override
-  void initState() {
-    super.initState();
-    _checkLoginStatus(); // 로그인 상태 확인
-  }
-
-  // 이미지 업로드 및 OCR 작업을 수행합니다.
   Future<void> _uploadImage(XFile pickedFile) async {
     setState(() {
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('$baseUrl:3000/ocr');
+    final url = Uri.parse('$baseUrl:7000/ocr');
     final request = http.MultipartRequest('POST', url);
-    request.headers['Authorization'] = 'Bearer $authToken';
+
     request.files
         .add(await http.MultipartFile.fromPath('image', pickedFile.path));
     final response = await request.send();
@@ -96,48 +82,16 @@ class _HomeScreenState extends State<HomeScreen>
       var responseData = await response.stream.bytesToString();
       var decodedData = jsonDecode(responseData);
       setState(() {
-        ocrResult = decodedData['text'].join('\n'); // OCR 결과 업데이트
+        ocrResult = decodedData['text'].join('\n');
       });
     } else {
       setState(() {
-        ocrResult =
-            'Failed to perform OCR: ${response.statusCode}'; // OCR 실패 메시지 업데이트
+        ocrResult = 'Failed to perform OCR: ${response.statusCode}';
       });
     }
   }
 
-  // 사용자의 로그인 상태를 확인하고 인증 토큰을 가져옵니다.
-  Future<void> _checkLoginStatus() async {
-    final token = await _loginUser();
-    if (token != null) {
-      final isValid = await _validateToken(token);
-      setState(() {
-        authToken = isValid ? token : null;
-      });
-    }
-  }
-
-  // 사용자가 이미 로그인했는지 확인합니다.
-  Future<String?> _loginUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('authToken');
-  }
-
-  // 토큰의 유효성을 확인합니다.
-  Future<bool> _validateToken(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-      return response.statusCode == 200;
-    } catch (e) {
-      debugPrint('Error validating token: $e');
-      return false;
-    }
-  }
-
-  int _selectedIndex = 0; // 현재 선택된 바텀 네비게이션 바 아이템의 인덱스
+  int _selectedIndex = 0;
   int _current = 0;
   final CarouselController _controller = CarouselController();
   List<String> imageList = [
@@ -189,10 +143,7 @@ class _HomeScreenState extends State<HomeScreen>
 
                 return GestureDetector(
                   onTap: () {
-                    _navigateToScreen(
-                      context,
-                      category["name"]!,
-                    );
+                    _navigateToScreen(context, category["name"]!);
                   },
                   child: SizedBox(
                     width: 100,
@@ -211,8 +162,7 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                           ),
                           Text('${category["name"]}', // 카테고리 이름 라벨
-                              style: const TextStyle(
-                                  fontSize: 12, fontFamily: 'PretendardBold')),
+                              style: const TextStyle(fontSize: 12)),
                         ],
                       ),
                     ),
@@ -247,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen>
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        //type: BottomNavigationBarType.fixed,
+        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.green, // 선택된 아이템의 색상
         unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
@@ -292,13 +242,37 @@ class _HomeScreenState extends State<HomeScreen>
           if (index == 0) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const MainpageApp()),
+              MaterialPageRoute(
+                  builder: (context) => const NoUserMainpageApp()),
             );
           } else if (index == 1) {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const Freeboard()));
-            // 커뮤니티 페이지로 이동
-            // 커뮤니티 페이지로 이동하는 코드를 여기에 추가
+            setState(() {
+              _selectedIndex = index;
+            });
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('비회원 이용불가'),
+                    content: const Text('비회원은 이용하실 수 없습니다.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // 다이얼로그 닫기
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor:
+                              const Color.fromARGB(255, 29, 171, 102),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: const Text('확인'),
+                      ),
+                    ],
+                  );
+                });
           } else if (index == 2) {
             showModalBottomSheet(
               context: context,
@@ -329,7 +303,7 @@ class _HomeScreenState extends State<HomeScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (BuildContext context) => Ocrresult(
+                                  builder: (BuildContext context) => Ocrresult2(
                                     imagePath: pickedFile.path,
                                     ocrResult: ocrResult,
                                   ),
@@ -344,10 +318,7 @@ class _HomeScreenState extends State<HomeScreen>
                               });
                             }
                           },
-                          child: const Text(
-                            '카메라',
-                            style: TextStyle(fontFamily: 'PretendardMedium'),
-                          ),
+                          child: const Text('Camera'),
                         ),
                       ),
                       Expanded(
@@ -367,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (BuildContext context) => Ocrresult(
+                                  builder: (BuildContext context) => Ocrresult2(
                                     imagePath: pickedFile.path,
                                     ocrResult: ocrResult,
                                   ),
@@ -377,10 +348,7 @@ class _HomeScreenState extends State<HomeScreen>
                               debugPrint('OCR failed: $e');
                             }
                           },
-                          child: const Text(
-                            '갤러리',
-                            style: TextStyle(fontFamily: 'PretendardMedium'),
-                          ),
+                          child: const Text('Gallery'),
                         ),
                       ),
                       Expanded(
@@ -400,10 +368,7 @@ class _HomeScreenState extends State<HomeScreen>
                               },
                             );
                           },
-                          child: const Text(
-                            'QR/바코드',
-                            style: TextStyle(fontFamily: 'PretendardMedium'),
-                          ),
+                          child: const Text('QR/Barcode'),
                         ),
                       ),
                     ],
@@ -415,10 +380,30 @@ class _HomeScreenState extends State<HomeScreen>
             setState(() {
               _selectedIndex = index;
             });
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const MypageApp()),
-            );
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('비회원 이용불가'),
+                    content: const Text('비회원은 이용하실 수 없습니다.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // 다이얼로그 닫기
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor:
+                              const Color.fromARGB(255, 29, 171, 102),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: const Text('확인'),
+                      ),
+                    ],
+                  );
+                });
           }
         },
       ),
@@ -520,7 +505,6 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
-// 상품 그리드를 표시하는 StatefulWidget입니다.
 class ProductGrid extends StatefulWidget {
   const ProductGrid({super.key});
 
@@ -536,10 +520,9 @@ class _ProductGridState extends State<ProductGrid> {
   @override
   void initState() {
     super.initState();
-    fetchData(); // 데이터 가져오기
+    fetchData(); // initState에서 데이터를 불러옵니다.
   }
 
-  // 상품 데이터를 가져오는 비동기 함수
   Future<void> fetchData() async {
     final response = await http.get(
       Uri.parse('$baseUrl:8000/'),
@@ -551,27 +534,6 @@ class _ProductGridState extends State<ProductGrid> {
       });
     } else {
       throw Exception('Failed to load data');
-    }
-  }
-
-  // 사용자의 로그인 상태를 확인하고 메인 페이지로 리디렉션하는 함수
-  Future<void> checkLoginStatus(BuildContext context) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    if (!isLoggedIn) {
-      // 로그인x
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginApp()),
-      );
-    } else {
-      // 로그인 o -> 메인 페이지로 이동
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainpageApp()),
-      );
     }
   }
 
@@ -617,7 +579,6 @@ class _ProductGridState extends State<ProductGrid> {
     );
   }
 
-  // 상품 클릭 시 새로운창에서 상품 정보를 표시하는 함수
   void _handleProductClick(BuildContext context, Product product) {
     Navigator.push(
       context,

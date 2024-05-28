@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/appbar/search_widget.dart';
 import 'package:flutter_banergy/mainDB.dart';
+import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SearchScreen extends StatefulWidget {
   final String searchText;
@@ -17,6 +19,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late String searchText;
   late List<Product> products = [];
 
@@ -30,7 +33,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://172.30.1.96:8000/?query=$searchText'),
+      Uri.parse('$baseUrl:8000/?query=$searchText'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -46,6 +49,12 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context); // 뒤로가기 동작
+          },
+        ),
         actions: const [
           Flexible(
             child: SearchWidget(),
@@ -107,40 +116,13 @@ class _SerachGridState extends State<SerachGrid> {
     );
   }
 
+  // 상품 클릭 시 새로운 창에서 상품 정보를 표시하는 함수
   void _handleProductClick(BuildContext context, Product product) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('상품 정보'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('카테고리: ${product.kategorie}'),
-                Text('이름: ${product.name}'),
-                Image.network(
-                  product.frontproduct,
-                  fit: BoxFit.cover,
-                ),
-                Image.network(
-                  product.backproduct,
-                  fit: BoxFit.cover,
-                ),
-                Text('알레르기 식품: ${product.allergens}'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('닫기'),
-            ),
-          ],
-        );
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => pdScreen(product: product),
+      ),
     );
   }
 }

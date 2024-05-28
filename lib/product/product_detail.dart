@@ -4,6 +4,7 @@ import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
   runApp(
@@ -29,6 +30,7 @@ class pdScreen extends StatefulWidget {
 
 // ignore: camel_case_types
 class _pdScreenState extends State<pdScreen> {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late List<Product> products = [];
 
   @override
@@ -40,7 +42,7 @@ class _pdScreenState extends State<pdScreen> {
   // 상품 데이터를 가져오는 비동기 함수
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://172.30.1.96:8000/'),
+      Uri.parse('$baseUrl:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {

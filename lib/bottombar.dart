@@ -12,6 +12,8 @@ import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:photo_view/photo_view.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //바텀 바 내용 구현
 class BottomNavBar extends StatefulWidget {
@@ -24,6 +26,7 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar>
     with SingleTickerProviderStateMixin {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   String? authToken; // 사용자의 인증 토큰
   final ImagePicker _imagePicker = ImagePicker(); // 이미지 피커 인스턴스
   final _qrBarCodeScannerDialogPlugin =
@@ -46,7 +49,7 @@ class _BottomNavBarState extends State<BottomNavBar>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('http://172.30.1.96:7000/ocr');
+    final url = Uri.parse('$baseUrl:7000/ocr');
     final request = http.MultipartRequest('POST', url);
     request.files
         .add(await http.MultipartFile.fromPath('image', pickedFile.path));
@@ -71,6 +74,12 @@ class _BottomNavBarState extends State<BottomNavBar>
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: _selectedIndex,
+      //type: BottomNavigationBarType.fixed,
+      selectedItemColor: Colors.green, // 선택된 아이템의 색상
+      unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
+      selectedLabelStyle:
+          const TextStyle(color: Colors.green), // 선택된 아이템의 라벨 색상
+
       items: const [
         BottomNavigationBarItem(
           icon: ImageIcon(
@@ -113,10 +122,11 @@ class _BottomNavBarState extends State<BottomNavBar>
             MaterialPageRoute(builder: (context) => const MainpageApp()),
           );
         } else if (index == 1) {
-          Navigator.pushReplacement(context,
+          setState(() {
+            _selectedIndex = index;
+          });
+          Navigator.push(context,
               MaterialPageRoute(builder: (context) => const Freeboard()));
-          // 커뮤니티 페이지로 이동
-          // 커뮤니티 페이지로 이동하는 코드를 여기에 추가
         } else if (index == 2) {
           showModalBottomSheet(
             context: context,

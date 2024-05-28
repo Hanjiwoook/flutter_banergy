@@ -3,73 +3,47 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class Ocrresult extends StatefulWidget {
+class Ocrresult2 extends StatefulWidget {
   final String imagePath;
   final String ocrResult;
 
-  const Ocrresult({
-    super.key,
+  const Ocrresult2({
+    Key? key,
     required this.imagePath,
     required this.ocrResult,
-  });
+  }) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _OcrresultState createState() => _OcrresultState();
 }
 
-class _OcrresultState extends State<Ocrresult> {
+class _OcrresultState extends State<Ocrresult2> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late String _ocrResult;
   late String _hirightingResult;
   bool isOcrInProgress = true;
-  String? authToken;
+  List<String> userAllergies = []; // 사용자 알레르기 정보를 저장할 리스트
 
   @override
   void initState() {
     super.initState();
     _ocrResult = widget.ocrResult;
     _hirightingResult = widget.ocrResult;
-    _checkLoginStatus();
+    _getAllergies();
+    _getOCRResult();
   }
 
-  Future<void> _checkLoginStatus() async {
-    final token = await _loginuser();
-    if (token != null) {
-      final isValid = await _validateToken(token);
-      if (isValid) {
-        setState(() {
-          authToken = token;
-        });
-        await _getOCRResult(token);
-        await _getUserAllergies(token); // 알레르기 정보 가져오기 추가
-      } else {
-        setState(() {
-          authToken = null;
-        });
-      }
-    }
-  }
-
-  Future<void> _getUserAllergies(String token) async {
+  Future<void> _getAllergies() async {
     try {
-      final url = Uri.parse('$baseUrl:3000/loginuser');
-      var response = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer $token'},
-      );
+      final url = Uri.parse('$baseUrl:7000/ftr');
+      var response = await http.get(url);
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        List<String> allergies = data['allergies'].cast<String>();
-        print('사용자 알레르기 : $allergies');
-
-        // 알레르기 정보를 저장
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setStringList('allergies', allergies);
+        userAllergies = (data['allergies'] as List).cast<String>();
+        print('사용자 알레르기 : $userAllergies');
       } else {
         print('Failed to fetch user allergies: ${response.statusCode}');
       }
@@ -78,39 +52,10 @@ class _OcrresultState extends State<Ocrresult> {
     }
   }
 
-  Future<String?> _loginuser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
-    return token;
-  }
-
-  Future<bool> _validateToken(String token) async {
+  Future<void> _getOCRResult() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      print('Error validating token: $e');
-      return false;
-    }
-  }
-
-  //  OCR 결과
-  Future<void> _getOCRResult(String token) async {
-    try {
-      final url = Uri.parse('$baseUrl:3000/result');
-      var response = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer $token'},
-      );
+      final url = Uri.parse('$baseUrl:7000/result');
+      var response = await http.get(url);
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
@@ -195,6 +140,15 @@ class _OcrresultState extends State<Ocrresult> {
               thickness: 1.0,
               height: 5.0,
             ),
+            const Center(
+              child: Text(
+                'OCR 결과',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             if (isOcrInProgress)
               const Padding(
@@ -224,10 +178,10 @@ class _OcrresultState extends State<Ocrresult> {
                           _hirightingResult,
                           style: const TextStyle(
                             fontSize: 20.0,
+                            color: Colors.black, // 텍스트 색상 지정
                           ),
                         ),
                       ),
-                    const SizedBox(height: 20),
                     if (_ocrResult.isNotEmpty)
                       Text(
                         _ocrResult,

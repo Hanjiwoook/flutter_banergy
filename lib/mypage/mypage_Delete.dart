@@ -1,28 +1,130 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
-import '../mypage/mypage.dart';
+import 'dart:convert';
 
-/*void main() {
-  runApp(const MaterialApp(
+import 'package:flutter/material.dart';
+import 'package:flutter_banergy/bottombar.dart';
+import 'package:flutter_banergy/login/login_fristapp.dart';
+import '../mypage/mypage.dart';
+import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+void main() {
+  runApp(MaterialApp(
     home: Delete(),
   ));
-}*/
+}
 
+// ignore: must_be_immutable
 class Delete extends StatelessWidget {
-  const Delete({Key? key}) : super(key: key);
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _resonController = TextEditingController();
+  Delete({super.key});
+
+  // 탈퇴하기
+  Future<void> _delete(
+      BuildContext context, MaterialPageRoute materialPageRoute) async {
+    final String reason = _resonController.text;
+    final String password = _passwordController.text;
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl:3000/delete'),
+        body: jsonEncode({
+          'reason': reason,
+          'password': password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        //  성공 시
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text('탈퇴안료'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                    //Navigator.push(
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FirstApp(),
+                      ),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: const Text('확인'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // 실패 시
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text('비밀번호가 일치하지 않습니다.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: const Text('확인'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+    // ignore: empty_catches
+    catch (e) {}
+  }
 
   @override
   Widget build(BuildContext context) {
-    ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 50, 160, 107)),
-      useMaterial3: true,
-    );
     return Scaffold(
       appBar: AppBar(
-        title: const Text("회원 탈퇴하기"),
-        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+        title: const Text(
+          "회원 탈퇴하기",
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFF1F2F7),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
+            );
+          },
+        ),
       ),
+      bottomNavigationBar: const BottomNavBar(),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
@@ -40,75 +142,62 @@ class Delete extends StatelessWidget {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 40),
-                const InputField(label: '계정 비밀번호', hintText: '계정 비밀번호를 입력하세요'),
-                const SizedBox(height: 20),
-                const InputField(
-                  label: '탈퇴 사유',
-                  hintText: '간단한 탈퇴 사유를 적어주세요.',
+                Column(
+                  children: [
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: '비밀번호를 입력해주세요.',
+                        prefixIcon:
+                            const Icon(Icons.lock_open, color: Colors.grey),
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                      controller: _passwordController,
+                      obscureText: true, // 비밀번호를 숨기는 옵션
+                    ),
+                    const SizedBox(height: 15),
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: '간단한 탈퇴 사유를 적어주세요',
+                        prefixIcon:
+                            const Icon(Icons.help_outline, color: Colors.grey),
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                      controller: _resonController,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 15),
                 ElevatedButton(
-                  onPressed: () {
-                    // 다이얼로그를 표시
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('회원 탈퇴 완료'),
-                          content: const Text('회원 탈퇴가 성공적으로 처리되었습니다.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); // 다이얼로그를 닫음
-                              },
-                              child: const Text('확인'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                  onPressed: () => _delete(
+                    context,
+                    MaterialPageRoute(builder: (context) => FirstApp()),
                   ),
-                  child:
-                      const Text('회원탈퇴', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: const SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: Center(
+                      child: Text('탈퇴하기'),
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
         ),
       ),
-      //bottomNavigationBar: BottomNavBar(),
-    );
-  }
-}
-
-class InputField extends StatelessWidget {
-  final String label;
-  final String hintText;
-
-  const InputField({required this.label, this.hintText = ""});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-        ),
-        TextField(
-          decoration: InputDecoration(
-            hintText: hintText,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

@@ -43,15 +43,6 @@ class _SearchWidgetState extends State<SearchWidget> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MainpageApp()),
-            );
-          },
-        ),
         title: Padding(
           padding: const EdgeInsets.symmetric(
               vertical: 8, horizontal: 0), // 좌우 여백 추가

@@ -6,6 +6,8 @@ import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -21,6 +23,7 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   File? _image;
   final ImagePicker _picker = ImagePicker();
   final TextEditingController _addtitleController = TextEditingController();
@@ -43,7 +46,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://172.30.1.96:6000/add'),
+        Uri.parse('$baseUrl:6000/add'),
       );
 
       // 이미지 파일 추가
@@ -119,12 +122,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("상품 추가"),
-        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+        title: const Text(
+          "상품 추가",
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFF1F2F7),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
+            );
           },
         ),
       ),

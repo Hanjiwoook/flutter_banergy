@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/search.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SearchWidget extends StatefulWidget {
   const SearchWidget({super.key});
@@ -13,6 +15,7 @@ class SearchWidget extends StatefulWidget {
 }
 
 class _SearchWidgetState extends State<SearchWidget> {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
   bool _isSearching = false;
@@ -133,8 +136,7 @@ class _SearchWidgetState extends State<SearchWidget> {
       _isSearching = true;
     });
 
-    final response =
-        await http.get(Uri.parse('http://172.30.1.96:8000/?query=$query'));
+    final response = await http.get(Uri.parse('$baseUrl:8000/?query=$query'));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       setState(() {

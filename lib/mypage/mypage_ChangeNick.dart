@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter_banergy/main.dart';
+import 'package:flutter_banergy/bottombar.dart';
 import '../mypage/mypage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-/*void main() {
+void main() {
   runApp(const MaterialApp(
     home: ChangeNick(),
   ));
-}*/
+}
 
 class ChangeNick extends StatefulWidget {
-  const ChangeNick({Key? key}) : super(key: key);
+  const ChangeNick({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ChangeNickState createState() => _ChangeNickState();
 }
 
 class _ChangeNickState extends State<ChangeNick>
     with SingleTickerProviderStateMixin {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late TabController _tabController;
 
   @override
@@ -33,16 +36,25 @@ class _ChangeNickState extends State<ChangeNick>
 
   @override
   Widget build(BuildContext context) {
-    ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 50, 160, 107)),
-      useMaterial3: true,
-    );
     return Scaffold(
       appBar: AppBar(
-        title: const Text("닉네임 변경하기"),
-        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+        title: const Text(
+          "닉네임 변경하기",
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFF1F2F7),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
+            );
+          },
+        ),
       ),
+      bottomNavigationBar: const BottomNavBar(),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
@@ -50,11 +62,6 @@ class _ChangeNickState extends State<ChangeNick>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(
-                  'images/000.jpeg',
-                  width: 80,
-                  height: 80,
-                ),
                 const SizedBox(height: 20),
                 const Text(
                   '닉네임 변경',
@@ -86,7 +93,6 @@ class _ChangeNickState extends State<ChangeNick>
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
                     backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                   ),
                   child: const Text('닉네임 변경',
@@ -106,9 +112,8 @@ class InputField extends StatelessWidget {
   final String label;
   final String hintText;
 
-  const InputField({required this.label, this.hintText = ""});
+  const InputField({super.key, required this.label, this.hintText = ""});
 
-// 글상자
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -129,3 +134,43 @@ class InputField extends StatelessWidget {
     );
   }
 }
+/*
+class BottomNavBar extends StatelessWidget {
+  const BottomNavBar({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.adjust),
+          label: 'Lens',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'My',
+        ),
+      ],
+      onTap: (index) {
+        // Handle navigation based on the tapped item index
+        if (index == 0) {
+          // Home icon is tapped, navigate to the main page
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MainpageApp()),
+          );
+        } else if (index == 2) {
+          // My icon is tapped, navigate to the MypageApp
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MypageApp()),
+          );
+        }
+      },
+    );
+  }
+}*/

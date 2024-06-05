@@ -7,6 +7,7 @@ import 'package:flutter_banergy/login/login_fristapp.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
@@ -73,7 +74,11 @@ class LoginApp extends StatelessWidget {
                       width: double.infinity,
                       height: 50,
                       child: Center(
-                        child: Text('로그인'),
+                        child: Text(
+                          '로그인',
+                          style: TextStyle(
+                              fontFamily: 'PretendardSemiBold', fontSize: 22),
+                        ),
                       ),
                     ),
                   ),
@@ -276,7 +281,7 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          style: const TextStyle(fontFamily: 'PretendardBold', fontSize: 30),
         ),
         TextFormField(
           decoration: const InputDecoration(

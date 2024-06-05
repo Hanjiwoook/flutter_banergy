@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter_banergy/appbar/menu.dart';
 import 'package:flutter_banergy/appbar/search.dart';
-import 'package:flutter_banergy/main.dart';
+//import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 //import 'package:flutter_banergy/main.dart';
@@ -40,8 +40,37 @@ class _SearchWidgetState extends State<SearchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return Container(
+      height: 35,
+      width: MediaQuery.of(context).size.width * 1.0,
+      decoration: BoxDecoration(
+        color: const Color(0xFFEEEEEE),
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Center(
+        child: TextField(
+          controller: _searchController,
+          style: const TextStyle(
+            fontFamily: 'PretendardBold',
+          ),
+          decoration: InputDecoration(
+            hintText: '궁금했던 상품 정보를 검색해보세요',
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.only(left: 30, bottom: 13),
+            suffixIcon: IconButton(
+              onPressed: _onSearchPressed,
+              icon: const Icon(
+                Icons.search,
+                size: 20,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /*appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
@@ -100,7 +129,7 @@ class _SearchWidgetState extends State<SearchWidget> {
       ),
       body: _isSearching ? _buildSearchResults() : _buildProductList(),
     );
-  }
+  }*/
 
   void _onSearchPressed() {
     // 검색 실행

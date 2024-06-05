@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/home_search_widget.dart';
+import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/login/login_login.dart';
+import 'package:flutter_banergy/main_filtering_allergies.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
 import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
+import 'package:flutter_banergy/product/pd_choice.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
@@ -143,12 +146,41 @@ class _HomeScreenState extends State<HomeScreen>
   List<String> imageList = [
     'assets/images/ad.png',
   ];
+  List<Product> likedProducts = [];
+
+  void _showLikedProducts(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LikedProductsWidget(likedProducts: likedProducts),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const SearchWidget(), // 검색 위젯
+        title: const Home_SearchWidget(), // 검색 위젯
+        actions: [
+          IconButton(
+            icon: Image.asset(
+              'assets/images/filter.png',
+              width: 24.0,
+              height: 24.0,
+            ),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MainFilteringPage(),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.check_box),
+            onPressed: () => _showLikedProducts(context),
+          ),
+        ],
       ),
       body: CustomScrollView(
         slivers: [
@@ -208,10 +240,13 @@ class _HomeScreenState extends State<HomeScreen>
                                 height: 60, // 이미지의 높이
                               ),
                             ),
-                            Text('${category["name"]}', // 카테고리 이름 라벨
-                                style: const TextStyle(
-                                    fontSize: 12,
-                                    fontFamily: 'PretendardBold')),
+                            Text(
+                              '${category["name"]}', // 카테고리 이름 라벨
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontFamily: 'PretendardBold',
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -221,7 +256,33 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
           ),
-
+          // SliverPadding(
+          //   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+          //   sliver: SliverToBoxAdapter(
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.end,
+          //       children: [
+          //         IconButton(
+          //           icon: Image.asset(
+          //             'assets/images/filter.png',
+          //             width: 24.0,
+          //             height: 24.0,
+          //           ),
+          //           onPressed: () => Navigator.push(
+          //             context,
+          //             MaterialPageRoute(
+          //               builder: (context) => const FilteringPage(),
+          //             ),
+          //           ),
+          //         ),
+          //         IconButton(
+          //           icon: const Icon(Icons.check_box),
+          //           onPressed: () => _showLikedProducts(context),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           const ProductGrid(), // 상품 그리드
 
           if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시
@@ -251,6 +312,7 @@ class _HomeScreenState extends State<HomeScreen>
       bottomNavigationBar: BottomNavigationBar(
         //type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
+
         selectedItemColor: Colors.green, // 선택된 아이템의 색상
         unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
         selectedLabelStyle:
@@ -534,6 +596,7 @@ class ProductGrid extends StatefulWidget {
 class _ProductGridState extends State<ProductGrid> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late List<Product> products = [];
+  List<Product> likedProducts = [];
 
   @override
   void initState() {
@@ -577,8 +640,28 @@ class _ProductGridState extends State<ProductGrid> {
     }
   }
 
+  void _toggleLikedStatus(Product product) {
+    setState(() {
+      if (likedProducts.contains(product)) {
+        likedProducts.remove(product);
+      } else {
+        likedProducts.add(product);
+      }
+    });
+  }
+
+  // void _showLikedProducts(BuildContext context) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => LikedProductsWidget(likedProducts: likedProducts),
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
+    const backgroundColor = Color(0xFFFFFFFF);
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -586,34 +669,63 @@ class _ProductGridState extends State<ProductGrid> {
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           return Card(
-            child: InkWell(
-              onTap: () {
-                _handleProductClick(context, products[index]);
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 110, // 이미지 높이 제한
-                    child: Center(
-                      child: Image.network(
-                        products[index].frontproduct,
-                        fit: BoxFit.cover,
+            color: backgroundColor,
+            child: Stack(
+              children: [
+                InkWell(
+                  onTap: () {
+                    _handleProductClick(context, products[index]);
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 110, // 이미지 높이 제한
+                        child: Center(
+                          child: Image.network(
+                            products[index].frontproduct,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 24.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          products[index].name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'PretendardRegular',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          products[index].allergens,
+                          maxLines: 1, //한줄만 보이게 하는 것
+                          overflow: TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
+                        ),
+                      )
+                    ],
                   ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    products[index].name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'PretendardRegular',
-                    ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: likedProducts.contains(products[index])
+                        ? const Icon(Icons.favorite, color: Colors.red)
+                        : const Icon(Icons.favorite_border),
+                    onPressed: () {
+                      _toggleLikedStatus(products[index]);
+                    },
                   ),
-                  const SizedBox(height: 4.0),
-                  Text(products[index].allergens),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
@@ -628,6 +740,91 @@ class _ProductGridState extends State<ProductGrid> {
       context,
       MaterialPageRoute(
         builder: (context) => pdScreen(product: product),
+      ),
+    );
+  }
+}
+
+//좋아요 누른걸 보여주는 부분
+class LikedProductsWidget extends StatelessWidget {
+  final List<Product> likedProducts;
+
+  const LikedProductsWidget({super.key, required this.likedProducts});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      bottomNavigationBar: const BottomNavBar(),
+      body: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+        ),
+        itemCount: likedProducts.length,
+        itemBuilder: (context, index) {
+          final product = likedProducts[index];
+          return Card(
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => pd_choice(product: product),
+                  ),
+                );
+              },
+              child: Stack(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: Image.network(
+                            product.frontproduct,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product.name,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4.0),
+                            Text(product.allergens),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.favorite, color: Colors.red),
+                      onPressed: () {
+                        // 좋아요 취소 기능을 추가할 수 있음
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

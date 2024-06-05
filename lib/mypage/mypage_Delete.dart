@@ -1,14 +1,15 @@
+// ignore: file_names
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/login/login_fristapp.dart';
 import '../mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(MaterialApp(
     home: Delete(),
   ));
@@ -16,9 +17,9 @@ void main() {
 
 // ignore: must_be_immutable
 class Delete extends StatelessWidget {
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _resonController = TextEditingController();
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   Delete({super.key});
 
   // 탈퇴하기
@@ -46,7 +47,7 @@ class Delete extends StatelessWidget {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              content: const Text('탈퇴안료'),
+              content: const Text('탈퇴완료'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -107,97 +108,110 @@ class Delete extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "회원 탈퇴하기",
-          textAlign: TextAlign.center,
-        ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFFF1F2F7),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyHomePage()),
-            );
-          },
-        ),
-      ),
-      bottomNavigationBar: const BottomNavBar(),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(40.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'images/000.jpeg',
-                  width: 80,
-                  height: 80,
-                ),
-                const Text(
-                  '탈퇴하기',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 40),
-                Column(
-                  children: [
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: '비밀번호를 입력해주세요.',
-                        prefixIcon:
-                            const Icon(Icons.lock_open, color: Colors.grey),
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                      ),
-                      controller: _passwordController,
-                      obscureText: true, // 비밀번호를 숨기는 옵션
-                    ),
-                    const SizedBox(height: 15),
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: '간단한 탈퇴 사유를 적어주세요',
-                        prefixIcon:
-                            const Icon(Icons.help_outline, color: Colors.grey),
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                      ),
-                      controller: _resonController,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 15),
-                ElevatedButton(
-                  onPressed: () => _delete(
-                    context,
-                    MaterialPageRoute(builder: (context) => FirstApp()),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: const SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: Center(
-                      child: Text('탈퇴하기'),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+        appBar: AppBar(
+          title: const Text(
+            "탈퇴하기",
+            style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
+            textAlign: TextAlign.center,
+          ),
+          centerTitle: true,
+          backgroundColor: const Color(0xFFF1F2F7),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MyHomePage()),
+              );
+            },
           ),
         ),
-      ),
+        body: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 40),
+                  Column(
+                    children: [
+                      InputField(
+                        label: '계정 비밀번호',
+                        controller: _passwordController,
+                        obscureText: true,
+                      ),
+                      const SizedBox(height: 20),
+                      InputField(
+                        label: '탈퇴 사유',
+                        controller: _resonController,
+                        obscureText: false,
+                      ),
+                      const SizedBox(height: 95),
+                      ElevatedButton(
+                        onPressed: () => _delete(
+                          context,
+                          MaterialPageRoute(builder: (context) => FirstApp()),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: const Color(0xFF03C95B),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: const SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: Center(
+                            child: Text('완료'),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ));
+  }
+}
+
+class InputField extends StatelessWidget {
+  final bool isTextArea;
+  final String label;
+  final TextEditingController controller;
+  final bool obscureText;
+
+  const InputField({
+    this.isTextArea = false,
+    required this.label,
+    required this.controller,
+    super.key,
+    required this.obscureText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style:
+              const TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 25),
+        ),
+        TextFormField(
+          obscureText: obscureText,
+          decoration: const InputDecoration(
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
+            ),
+          ),
+          controller: controller,
+        ),
+      ],
     );
   }
 }

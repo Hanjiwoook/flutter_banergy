@@ -1,7 +1,9 @@
+//하트 누른 상품들 디테일 화면 (디테일로 들어가도 하트눌려져 있는 거)
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
+import 'package:flutter_banergy/appbar/search.dart';
 import 'package:flutter_banergy/mainDB.dart';
 //import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
@@ -14,27 +16,27 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   runApp(
     const MaterialApp(
-      home: pdScreen(
+      home: pd_choice(
         product: null,
       ),
     ),
   );
 }
 
-//pd -> 프로덕트 디테일 줄임말
+//pd_초이스 -> 선택한 프로덕트 디테일 줄임말
 // ignore: camel_case_types
-class pdScreen extends StatefulWidget {
+class pd_choice extends StatefulWidget {
   final Product? product;
 
-  const pdScreen({super.key, required this.product});
+  const pd_choice({super.key, required this.product});
 
   @override
   // ignore: library_private_types_in_public_api
-  _pdScreenState createState() => _pdScreenState();
+  _pd_choiceState createState() => _pd_choiceState();
 }
 
 // ignore: camel_case_types
-class _pdScreenState extends State<pdScreen> {
+class _pd_choiceState extends State<pd_choice> {
   late List<Product> products = [];
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   String? authToken;
@@ -194,7 +196,13 @@ class _pdScreenState extends State<pdScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const SearchScreen(
+                        searchText: '',
+                      )),
+            );
           },
         ),
       ),
@@ -203,10 +211,24 @@ class _pdScreenState extends State<pdScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 32, top: 8),
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Center(
+                child: SizedBox(
+                  width: 300,
+                  height: 250,
+                  child: Stack(
+                    children: [
+                      _buildImage(context, widget.product!.frontproduct),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 32),
+              child: Align(
+                alignment: Alignment.bottomRight,
                 child: IconButton(
                   onPressed: () {
                     setState(() {
@@ -220,83 +242,9 @@ class _pdScreenState extends State<pdScreen> {
                   },
                   icon: Icon(
                     isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: isLiked ? Colors.red : Colors.grey,
+                    color: isLiked ? Colors.grey : Colors.red,
                   ),
                   iconSize: 28,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: Center(
-                child: SizedBox(
-                  width: 250,
-                  height: 200,
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: _buildImage(
-                          context,
-                          widget.product!.frontproduct,
-                          borderColor: Colors.blue,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 32, bottom: 8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.zoom_in,
-                        color: textScaleFactor > minTextScaleFactor
-                            ? const Color(0xFF7C7C7C)
-                            : Colors.green,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          textScaleFactor += 0.5;
-                          if (textScaleFactor > maxTextScaleFactor) {
-                            textScaleFactor = maxTextScaleFactor;
-                          }
-                        });
-                      },
-                      iconSize: 28,
-                      padding: const EdgeInsets.all(0),
-                      constraints: const BoxConstraints(
-                        minWidth: 48,
-                        minHeight: 48,
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    IconButton(
-                      icon:
-                          const Icon(Icons.zoom_out, color: Color(0xFF7C7C7C)),
-                      onPressed: () {
-                        setState(() {
-                          textScaleFactor -= 0.5;
-                          if (textScaleFactor < minTextScaleFactor) {
-                            textScaleFactor = minTextScaleFactor;
-                          }
-                        });
-                      },
-                      color: Colors.white,
-                      iconSize: 28,
-                      padding: const EdgeInsets.all(0),
-                      constraints: const BoxConstraints(
-                        minWidth: 48,
-                        minHeight: 48,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -315,6 +263,55 @@ class _pdScreenState extends State<pdScreen> {
                     widget.product!.kategorie,
                     widget.product!.name,
                   }),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 40.0, right: 26.0),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.zoom_in,
+                            color: textScaleFactor > minTextScaleFactor
+                                ? const Color(0xFF7C7C7C)
+                                : Colors.green,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              textScaleFactor += 0.5;
+                              if (textScaleFactor > maxTextScaleFactor) {
+                                textScaleFactor = maxTextScaleFactor;
+                              }
+                            });
+                          },
+                          iconSize: 28,
+                          padding: const EdgeInsets.all(0),
+                          constraints: const BoxConstraints(
+                            minWidth: 48,
+                            minHeight: 48,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        IconButton(
+                          icon: const Icon(Icons.zoom_out,
+                              color: Color(0xFF7C7C7C)),
+                          onPressed: () {
+                            setState(() {
+                              textScaleFactor -= 0.5;
+                              if (textScaleFactor < minTextScaleFactor) {
+                                textScaleFactor = minTextScaleFactor;
+                              }
+                            });
+                          },
+                          color: Colors.white,
+                          iconSize: 28,
+                          padding: const EdgeInsets.all(0),
+                          constraints: const BoxConstraints(
+                            minWidth: 48,
+                            minHeight: 48,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -342,17 +339,6 @@ class _pdScreenState extends State<pdScreen> {
       ),
     );
   }
-
-//하트 부분
-  // void _toggleLikedStatus(int index) {
-  //   setState(() {
-  //     if (likedProducts.contains(index)) {
-  //       likedProducts.remove(index);
-  //     } else {
-  //       likedProducts.add(index);
-  //     }
-  //   });
-  // }
 
   Widget _buildText(Map<String, String> textMap, double textScaleFactor) {
     return Padding(
@@ -386,8 +372,7 @@ class _pdScreenState extends State<pdScreen> {
     );
   }
 
-  Widget _buildImage(BuildContext context, String imageUrl,
-      {required MaterialColor borderColor}) {
+  Widget _buildImage(BuildContext context, String imageUrl) {
     return GestureDetector(
       onTap: () {
         // 확대 이미지

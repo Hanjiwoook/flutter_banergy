@@ -1,11 +1,13 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MaterialApp(
     home: Changeidpw(),
   ));
@@ -15,11 +17,11 @@ class Changeidpw extends StatefulWidget {
   const Changeidpw({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ChangeidpwState createState() => _ChangeidpwState();
 }
 
 class _ChangeidpwState extends State<Changeidpw> {
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final _formKey = GlobalKey<FormState>(); // 폼 키 초기화
 
   final _passwordController = TextEditingController();
@@ -28,6 +30,7 @@ class _ChangeidpwState extends State<Changeidpw> {
   final newpasswordController = TextEditingController();
   final TextEditingController newconfirmPasswordController =
       TextEditingController();
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void dispose() {
@@ -68,8 +71,12 @@ class _ChangeidpwState extends State<Changeidpw> {
     final String password = _passwordController.text;
     final String newPassword = newpasswordController.text;
 
-    print('현재 비밀번호: $password');
-    print('새로운 비밀번호: $newPassword');
+    if (kDebugMode) {
+      print('현재 비밀번호: $password');
+    }
+    if (kDebugMode) {
+      print('새로운 비밀번호: $newPassword');
+    }
 
     try {
       final response = await http.post(
@@ -98,7 +105,7 @@ class _ChangeidpwState extends State<Changeidpw> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MypageApp(),
+                        builder: (context) => const MyHomePage(),
                       ),
                     );
                   },
@@ -136,7 +143,9 @@ class _ChangeidpwState extends State<Changeidpw> {
         );
       }
     } catch (e) {
-      print('Error sending request: $e');
+      if (kDebugMode) {
+        print('Error sending request: $e');
+      }
     }
   }
 
@@ -145,7 +154,8 @@ class _ChangeidpwState extends State<Changeidpw> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "비번 변경하기",
+          "비밀번호 변경하기",
+          style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -160,7 +170,7 @@ class _ChangeidpwState extends State<Changeidpw> {
           },
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(),
+      //bottomNavigationBar: const BottomNavBar(),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
@@ -170,35 +180,19 @@ class _ChangeidpwState extends State<Changeidpw> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'images/000.jpeg',
-                    width: 80,
-                    height: 80,
-                  ),
-                  const Text(
-                    '비밀번호 변경하기',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        '현재 비밀번호',
+                        '기존 비밀번호',
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                            fontSize: 30, fontFamily: 'PretendardBold'),
                       ),
-                      TextFormField(
+                      InputField(
                         controller: _passwordController,
                         obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: '비밀번호를 입력해주세요.',
-                          prefixIcon:
-                              const Icon(Icons.lock_open, color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                        ),
                         validator: (value) {
                           String pattern =
                               r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
@@ -213,46 +207,19 @@ class _ChangeidpwState extends State<Changeidpw> {
 
                           return null;
                         },
+                        label: '',
                       ),
-                      const SizedBox(height: 15),
-                      TextFormField(
-                        controller: _confirmPasswordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: '비밀번호를 다시 입력해주세요.',
-                          prefixIcon:
-                              const Icon(Icons.lock_open, color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '비밀번호 재확인.';
-                          } else if (value != _passwordController.text) {
-                            return '비밀번호가 일치하지 않습니다.';
-                          }
-                          return null;
-                        },
-                      ),
+
                       const SizedBox(height: 20),
                       //여기부터 새 비밀번호 입력
                       const Text(
-                        '새로운 비밀번호',
+                        '새 비밀번호',
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                            fontSize: 30, fontFamily: 'PretendardBold'),
                       ),
-                      TextFormField(
+                      InputField(
                         controller: newpasswordController,
                         obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: '새로운 비밀번호를 입력해주세요.',
-                          prefixIcon:
-                              const Icon(Icons.lock_open, color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                        ),
                         validator: (value) {
                           String pattern =
                               r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
@@ -267,35 +234,15 @@ class _ChangeidpwState extends State<Changeidpw> {
 
                           return null;
                         },
+                        label: '',
                       ),
-                      const SizedBox(height: 15),
-                      TextFormField(
-                        controller: newconfirmPasswordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: '새로운 비밀번호를 다시 입력해주세요.',
-                          prefixIcon:
-                              const Icon(Icons.lock_open, color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '비밀번호 재확인.';
-                          } else if (value != newpasswordController.text) {
-                            return '비밀번호가 일치하지 않습니다.';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 15),
+
+                      const SizedBox(height: 95),
                       ElevatedButton(
                         onPressed: () => _changepw(context),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
-                          backgroundColor:
-                              const Color.fromARGB(255, 29, 171, 102),
+                          backgroundColor: const Color(0xFF03C95B),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
                           ),
@@ -304,7 +251,7 @@ class _ChangeidpwState extends State<Changeidpw> {
                           width: double.infinity,
                           height: 50,
                           child: Center(
-                            child: Text('변경하기'),
+                            child: Text('완료'),
                           ),
                         ),
                       ),
@@ -316,6 +263,42 @@ class _ChangeidpwState extends State<Changeidpw> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class InputField extends StatelessWidget {
+  final bool isTextArea;
+  final String label;
+  final TextEditingController controller;
+  final String? Function(dynamic value) validator;
+  final bool obscureText;
+
+  const InputField({
+    this.isTextArea = false,
+    required this.label,
+    required this.controller,
+    required this.validator,
+    super.key,
+    required this.obscureText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style:
+              const TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 25),
+        ),
+        TextFormField(
+          obscureText: obscureText,
+          controller: controller,
+          validator: validator,
+        ),
+      ],
     );
   }
 }

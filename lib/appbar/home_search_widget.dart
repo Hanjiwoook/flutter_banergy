@@ -7,14 +7,14 @@ import 'dart:convert';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class SearchWidget extends StatefulWidget {
-  const SearchWidget({super.key});
+class Home_SearchWidget extends StatefulWidget {
+  const Home_SearchWidget({super.key});
 
   @override
-  State<SearchWidget> createState() => _SearchWidgetState();
+  State<Home_SearchWidget> createState() => _Home_SearchWidgetState();
 }
 
-class _SearchWidgetState extends State<SearchWidget> {
+class _Home_SearchWidgetState extends State<Home_SearchWidget> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];

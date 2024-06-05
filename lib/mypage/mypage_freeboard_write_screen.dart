@@ -8,12 +8,24 @@ import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// ignore: camel_case_types, must_be_immutable
-class Freeboard_WriteScreen extends StatelessWidget {
+class Freeboard_WriteScreen extends StatefulWidget {
+  const Freeboard_WriteScreen({super.key});
+
+  @override
+  _Freeboard_WriteScreenState createState() => _Freeboard_WriteScreenState();
+}
+
+class _Freeboard_WriteScreenState extends State<Freeboard_WriteScreen> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
-  Freeboard_WriteScreen({super.key});
   final TextEditingController freetitleController = TextEditingController();
   final TextEditingController freecontentController = TextEditingController();
+
+  @override
+  void dispose() {
+    freetitleController.dispose();
+    freecontentController.dispose();
+    super.dispose();
+  }
 
   // 글 작성 함수
   Future<void> free(BuildContext context) async {

@@ -11,6 +11,7 @@ import 'package:flutter_banergy/login/login_pw_find.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
@@ -48,8 +49,8 @@ class FirstApp extends StatelessWidget {
                     const Text(
                       '가장 편한 방법으로\n시작해 보세요!',
                       style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
+                        fontFamily: 'PretendardBold',
+                        fontSize: 40,
                       ),
                     ),
                     const SizedBox(height: 130),
@@ -72,7 +73,11 @@ class FirstApp extends StatelessWidget {
                         width: double.infinity,
                         height: 50,
                         child: Center(
-                          child: Text('로그인'),
+                          child: Text(
+                            '로그인',
+                            style: TextStyle(
+                                fontFamily: 'PretendardSemiBold', fontSize: 18),
+                          ),
                         ),
                       ),
                     ),
@@ -97,7 +102,11 @@ class FirstApp extends StatelessWidget {
                         width: double.infinity,
                         height: 50,
                         child: Center(
-                          child: Text('회원 가입하기'),
+                          child: Text(
+                            '회원 가입하기',
+                            style: TextStyle(
+                                fontFamily: 'PretendardSemiBold', fontSize: 18),
+                          ),
                         ),
                       ),
                     ),
@@ -117,7 +126,10 @@ class FirstApp extends StatelessWidget {
                             );
                           },
                           child: const Text('아이디 찾기',
-                              style: TextStyle(color: Colors.black)),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'PretendardSemiBold',
+                                  fontSize: 16)),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -129,7 +141,10 @@ class FirstApp extends StatelessWidget {
                             );
                           },
                           child: const Text('비밀번호 찾기',
-                              style: TextStyle(color: Colors.black)),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'PretendardSemiBold',
+                                  fontSize: 16)),
                         ),
                       ],
                     ),
@@ -153,7 +168,11 @@ class FirstApp extends StatelessWidget {
                         width: double.infinity,
                         height: 50,
                         child: Center(
-                          child: Text('비회원으로 이용하기'),
+                          child: Text(
+                            '비회원으로 이용하기',
+                            style: TextStyle(
+                                fontFamily: 'PretendardSemiBold', fontSize: 18),
+                          ),
                         ),
                       ),
                     ),

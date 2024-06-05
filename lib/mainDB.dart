@@ -1,5 +1,6 @@
-// DB Product + 자유게시판
+// DB Product + 컴뮤니티 + 유저 정보까지
 
+//상품 정보들
 class Product {
   final int id;
   final String barcode;
@@ -8,6 +9,7 @@ class Product {
   final String frontproduct;
   final String backproduct;
   final String allergens;
+  bool isHearted;
 
   Product({
     required this.id,
@@ -16,7 +18,8 @@ class Product {
     required this.kategorie,
     required this.frontproduct,
     required this.backproduct,
-    required this.allergens,
+    this.allergens = '',
+    this.isHearted = false,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -28,10 +31,30 @@ class Product {
       frontproduct: json['frontproduct'],
       backproduct: json['backproduct'],
       allergens: json['allergens'],
+      isHearted: json['isHearted'] ?? false,
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'barcode': barcode,
+      'name': name,
+      'kategorie': kategorie,
+      'frontproduct': frontproduct,
+      'backproduct': backproduct,
+      'allergens': allergens,
+      'isHearted': isHearted,
+    };
+  }
+
+  // 좋아요를 토글하는 메서드
+  void toggleHeart() {
+    isHearted = !isHearted;
   }
 }
 
+//커뮤니티용
+// ignore: camel_case_types
 class freeDB {
   final String? freetitle;
   final String? freecontent;

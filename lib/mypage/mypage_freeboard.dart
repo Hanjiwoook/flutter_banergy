@@ -111,6 +111,7 @@ class _FreeboardState extends State<Freeboard>
       appBar: AppBar(
         title: const Text(
           "커뮤니티",
+          style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -130,7 +131,8 @@ class _FreeboardState extends State<Freeboard>
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Freeboard_WriteScreen()),
+            MaterialPageRoute(
+                builder: (context) => const Freeboard_WriteScreen()),
           );
         },
         backgroundColor: const Color(0xFF03C95B),

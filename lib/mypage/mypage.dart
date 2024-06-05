@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
-import 'package:flutter_banergy/mypage/mypage_ChangeNick.dart';
 import 'package:flutter_banergy/mypage/mypage_Delete.dart';
 import 'package:flutter_banergy/mypage/mypage_InquiryScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_addproductScreen.dart';
@@ -124,14 +123,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 알러지 필터링 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const FilteringAllergies()),
-        );
-        break;
-      case "닉네임 변경":
-        // 닉네임 변경 페이지로 이동
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ChangeNick()),
+          MaterialPageRoute(builder: (context) => FilteringAllergies()),
         );
         break;
       case "비밀번호 변경":
@@ -181,6 +173,7 @@ class _MyHomePageState extends State<MyHomePage>
       appBar: AppBar(
         title: const Text(
           "마이페이지",
+          style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -306,7 +299,6 @@ class _MyHomePageState extends State<MyHomePage>
               ),
               child: Column(
                 children: [
-                  _buildButton("닉네임 변경", Icons.arrow_forward_ios),
                   _buildButton("비밀번호 변경", Icons.arrow_forward_ios),
                   _buildButton("탈퇴하기", Icons.arrow_forward_ios),
                 ],

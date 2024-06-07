@@ -4,6 +4,7 @@ import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard_write_screen.dart';
+import 'package:flutter_banergy/product/%EC%9E%84%EC%8B%9C%EC%B0%9C.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
@@ -307,6 +308,12 @@ class _FreeboardState extends State<Freeboard>
                 );
               },
             );
+          } else if (index == 3) {
+            setState(() {
+              _selectedIndex = index;
+            });
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const MainpageApp2()));
           } else if (index == 4) {
             setState(() {
               _selectedIndex = index;

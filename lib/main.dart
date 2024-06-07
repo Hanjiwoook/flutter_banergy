@@ -6,6 +6,7 @@ import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/main_filtering_allergies.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
+import 'package:flutter_banergy/product/%EC%9E%84%EC%8B%9C%EC%B0%9C.dart';
 import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:flutter_banergy/product/pd_choice.dart';
@@ -474,6 +475,14 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                 );
               },
+            );
+          } else if (index == 3) {
+            setState(() {
+              _selectedIndex = index;
+            });
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MainpageApp2()),
             );
           } else if (index == 4) {
             setState(() {

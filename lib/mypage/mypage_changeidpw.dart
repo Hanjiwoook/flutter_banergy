@@ -188,7 +188,7 @@ class _ChangeidpwState extends State<Changeidpw> {
                       const Text(
                         '기존 비밀번호',
                         style: TextStyle(
-                            fontSize: 30, fontFamily: 'PretendardBold'),
+                            fontSize: 30, fontFamily: 'PretendardSemiBold'),
                       ),
                       InputField(
                         controller: _passwordController,
@@ -215,7 +215,7 @@ class _ChangeidpwState extends State<Changeidpw> {
                       const Text(
                         '새 비밀번호',
                         style: TextStyle(
-                            fontSize: 30, fontFamily: 'PretendardBold'),
+                            fontSize: 30, fontFamily: 'PretendardSemiBold'),
                       ),
                       InputField(
                         controller: newpasswordController,
@@ -244,14 +244,19 @@ class _ChangeidpwState extends State<Changeidpw> {
                           foregroundColor: Colors.white,
                           backgroundColor: const Color(0xFF03C95B),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
                         ),
                         child: const SizedBox(
                           width: double.infinity,
                           height: 50,
                           child: Center(
-                            child: Text('완료'),
+                            child: Text(
+                              '완료',
+                              style: TextStyle(
+                                  fontFamily: 'PretendardSemiBold',
+                                  fontSize: 22),
+                            ),
                           ),
                         ),
                       ),

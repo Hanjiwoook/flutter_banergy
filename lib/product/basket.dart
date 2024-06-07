@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/home_search_widget.dart';
 import 'package:flutter_banergy/bottombar.dart';
+import 'package:flutter_banergy/appbar/search_widget.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -26,11 +26,12 @@ class _BasketState extends State<Basket> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Home_SearchWidget(), // 검색 위젯
+        title: const SearchWidget(), // 검색 위젯
+        // 검색 위젯
       ),
       body: const SingleChildScrollView(
         child: Center(
-          child: Text('찜 화면 임시 구현'),
+          child: Text('찜 화면'),
         ),
       ),
       bottomNavigationBar: const BottomNavBar(),

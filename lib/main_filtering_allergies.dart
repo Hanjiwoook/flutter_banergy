@@ -218,7 +218,7 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
           const Text(
             "해당하는 알레르기를 체크해주세요",
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontFamily: 'PretendardSemiBold',
             ),
           ),
           // 중앙에 정렬된 필터 영역
@@ -255,10 +255,9 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
               child: const Text(
                 '적용',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontFamily: 'PretendardSemiBold'),
               ),
             ),
           ),
@@ -286,7 +285,10 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
                 checkListValue2.add(filter);
               });
             },
-            title: Text(filter),
+            title: Text(
+              filter,
+              style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 18),
+            ),
             value: checkListValue2.contains(filter) ? true : false,
           ),
         );

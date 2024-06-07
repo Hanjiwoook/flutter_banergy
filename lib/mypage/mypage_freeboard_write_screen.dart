@@ -2,7 +2,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/mypage/mypage.dart';
+//import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
@@ -149,8 +149,11 @@ class _Freeboard_WriteScreenState extends State<Freeboard_WriteScreen> {
                     minimumSize: const Size(double.infinity, 54),
                     backgroundColor: const Color(0xFF03C95B),
                   ),
-                  child:
-                      const Text('완료', style: TextStyle(color: Colors.white)),
+                  child: const Text('완료',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'PretendardSemiBold',
+                          fontSize: 22)),
                 ),
               ],
             ),

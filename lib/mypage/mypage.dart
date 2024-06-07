@@ -1,17 +1,20 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
+import 'package:flutter_banergy/mypage/allergy.dart';
 import 'package:flutter_banergy/mypage/mypage_Delete.dart';
 import 'package:flutter_banergy/mypage/mypage_InquiryScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_addproductScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_allergy_information.dart';
 import 'package:flutter_banergy/mypage/mypage_changeidpw.dart';
 import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
-import 'package:flutter_banergy/mypage/mypage_record_allergy_reactions.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../mypage/mypage_freeboard.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MypageApp extends StatelessWidget {
@@ -34,11 +37,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late TabController _tabController;
   String? authToken;
   String? loginName;
   set code(String? code) {}
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -54,7 +57,9 @@ class _MyHomePageState extends State<MyHomePage>
       if (isValid) {
         final userName = await _fetchUserName(token);
         setState(() {
-          print('로그인한 유저네임 : $loginName');
+          if (kDebugMode) {
+            print('로그인한 유저네임 : $loginName');
+          }
           authToken = token;
           loginName = userName;
         });
@@ -173,7 +178,6 @@ class _MyHomePageState extends State<MyHomePage>
       appBar: AppBar(
         title: const Text(
           "마이페이지",
-          style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -189,6 +193,7 @@ class _MyHomePageState extends State<MyHomePage>
         ),
       ),
       backgroundColor: const Color(0xFFF1F2F7),
+
       body: SingleChildScrollView(
         child: _buildList(),
       ),
@@ -299,6 +304,7 @@ class _MyHomePageState extends State<MyHomePage>
               ),
               child: Column(
                 children: [
+                  // _buildButton("닉네임 변경", Icons.arrow_forward_ios),
                   _buildButton("비밀번호 변경", Icons.arrow_forward_ios),
                   _buildButton("탈퇴하기", Icons.arrow_forward_ios),
                 ],
@@ -411,12 +417,14 @@ class _MyHomePageState extends State<MyHomePage>
         ),
       );
 
-//나의 알러지쪽 버튼
+//알레르기 반응 버튼
   Widget _buildButton3(IconData iconData) => SizedBox(
         width: 30, // 버튼의 너비 설정
         height: 30, // 버튼의 높이 설정
         child: ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
+            await initializeDateFormatting('ko_KR', null);
+            // ignore: use_build_context_synchronously
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -434,7 +442,7 @@ class _MyHomePageState extends State<MyHomePage>
           ),
         ),
       );
-  //나의 알러지쪽 버튼
+  //병원 진료 버튼
   Widget _buildButton2(IconData iconData) => SizedBox(
         width: 30, // 버튼의 너비 설정
         height: 30, // 버튼의 높이 설정

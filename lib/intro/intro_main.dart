@@ -47,7 +47,7 @@ class _introAppState extends State<introApp> {
     return MaterialApp(
       home: Builder(
         builder: (context) {
-          autoLogin(context);
+          //autoLogin(context);
           return FutureBuilder<Object>(
             future: Future.delayed(const Duration(seconds: 5), () => 100),
             builder: (context, snapshot) {

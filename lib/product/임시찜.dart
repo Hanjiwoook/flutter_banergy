@@ -46,15 +46,19 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         actions: const [
           Flexible(
             child: SearchWidget(), // Flexible 추가
           ),
         ],
       ),
-      body: const Expanded(
-        child: ProductGrid(),
-      ),
+      body: const ProductGrid(),
     );
   }
 }

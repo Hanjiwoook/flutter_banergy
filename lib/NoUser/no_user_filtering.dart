@@ -4,20 +4,22 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/NoUser/no_user_main.dart';
-import 'package:flutter_banergy/login/login_fristapp.dart';
+import 'package:flutter_banergy/login/login_FirstApp.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 // import 'package:flutter_banergy/bottombar.dart';
 // import 'package:flutter_banergy/mypage/mypage.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const Nouserfiltering());
 }
 
 class Nouserfiltering extends StatelessWidget {
-  const Nouserfiltering({Key? key});
+  const Nouserfiltering({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +30,16 @@ class Nouserfiltering extends StatelessWidget {
 }
 
 class FilteringPage extends StatefulWidget {
-  const FilteringPage({Key? key});
+  const FilteringPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _FilteringPageState createState() => _FilteringPageState();
 }
 
 class _FilteringPageState extends State<FilteringPage> {
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   List<String?> checkListValue2 = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   List<String> checkList2 = [
     "계란",
     "밀",
@@ -143,7 +146,9 @@ class _FilteringPageState extends State<FilteringPage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => FirstApp()),
+              MaterialPageRoute(
+                builder: (context) => FirstApp(),
+              ),
             );
           },
         ),
@@ -164,6 +169,7 @@ class _FilteringPageState extends State<FilteringPage> {
           const Text(
             "해당하는 알레르기를 체크해주세요",
             style: TextStyle(
+              fontWeight: FontWeight.bold,
               fontFamily: 'PretendardSemiBold',
             ),
           ),
@@ -188,7 +194,7 @@ class _FilteringPageState extends State<FilteringPage> {
             color: Colors.white,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                backgroundColor: const Color(0xFF03C95B),
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),

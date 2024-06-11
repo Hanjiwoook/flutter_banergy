@@ -2,7 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/login/login_fristapp.dart';
+import 'package:flutter_banergy/login/login_firstapp.dart';
 import '../mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/home_search_widget.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/login/login_login.dart';
-import 'package:flutter_banergy/main_filtering_allergies.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
 import 'package:flutter_banergy/product/%EC%9E%84%EC%8B%9C%EC%B0%9C.dart';
@@ -11,6 +10,7 @@ import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:flutter_banergy/product/pd_choice.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
+import 'package:flutter_banergy/main_filtering_allergies.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
@@ -173,13 +173,18 @@ class _HomeScreenState extends State<HomeScreen>
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const MainFilteringPage(),
+                builder: (context) => const FilteringAllergies(),
               ),
             ),
           ),
           IconButton(
             icon: const Icon(Icons.check_box),
-            onPressed: () => _showLikedProducts(context),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MainpageApp2(),
+              ),
+            ),
           ),
         ],
       ),
@@ -257,33 +262,7 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
           ),
-          // SliverPadding(
-          //   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-          //   sliver: SliverToBoxAdapter(
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.end,
-          //       children: [
-          //         IconButton(
-          //           icon: Image.asset(
-          //             'assets/images/filter.png',
-          //             width: 24.0,
-          //             height: 24.0,
-          //           ),
-          //           onPressed: () => Navigator.push(
-          //             context,
-          //             MaterialPageRoute(
-          //               builder: (context) => const FilteringPage(),
-          //             ),
-          //           ),
-          //         ),
-          //         IconButton(
-          //           icon: const Icon(Icons.check_box),
-          //           onPressed: () => _showLikedProducts(context),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
+
           const ProductGrid(), // 상품 그리드
 
           if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시
@@ -313,7 +292,6 @@ class _HomeScreenState extends State<HomeScreen>
       bottomNavigationBar: BottomNavigationBar(
         //type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
-
         selectedItemColor: Colors.green, // 선택된 아이템의 색상
         unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
         selectedLabelStyle:
@@ -490,7 +468,7 @@ class _HomeScreenState extends State<HomeScreen>
             });
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const MypageApp()),
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
             );
           }
         },
@@ -697,7 +675,7 @@ class _ProductGridState extends State<ProductGrid> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24.0),
+                      const SizedBox(height: 14.0),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Text(

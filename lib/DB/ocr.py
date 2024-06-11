@@ -36,7 +36,7 @@ def allergies():
     elif request.method == 'POST':
         data = request.json
         print("선택한 알레르기:", data)
-        
+
         allergies = data.get('allergies')
         timestamp = data.get('timestamp')
 
@@ -72,7 +72,7 @@ def perform_ocr(image_path):
 
 
 
-    
+
 @app.route('/result', methods=['GET'])
 def get_ocr_result():
     # 최근에 업로드된 이미지 파일 경로 가져오기
@@ -84,45 +84,49 @@ def get_ocr_result():
     # OCR 수행
     ocr_texts = perform_ocr(recent_file_path)
 
-    #최근에 저장된 정보 가져오기
+    # 최근에 저장된 정보 가져오기
     recently = NoUserOCR.query.order_by(NoUserOCR.timestamp.desc()).first()
         
     if recently:
-        # allergies = recently.allergies.replace('"', '').split(", ") if recently.allergies else []
-        allergies_str = recently.allergies.strip('[]')  
+        allergies_str = recently.allergies.strip('[]')
         allergies_list = allergies_str.replace('"', '').split(',')
 
-        allergies_list = [allergy.strip() for allergy in allergies_list]
-        print('가져온 사용자 알레르기 정보:', allergies_list)
+        highlighted_texts = []  # 하이라이팅된 텍스트를 저장할 리스트
 
-        highlighted_texts = []
+        # OCR 텍스트에서 하이라이팅 단어 찾기 
         for text in ocr_texts:
-            highlighted_text = []
-            for word in text.split():
-                if any(allergies_str in word for allergies_str in allergies_list):
-                    highlighted_text.append('『' + word + '』')
-                else:
-                    highlighted_text.append(word)
-            highlighted_texts.append(highlighted_text)
+            highlighted_text = []  # 현재 텍스트의 하이라이팅된 부분을 저장할 리스트
+            displayed_allergies = set()  # 중복된 알레르기 단어를 방지하기 위한 set
+            for word in text.split():  # 단어 단위로 분리해서 반복
+                original_word = word  # 원래 단어를 저장
+                for allergy in allergies_list:  # 사용자의 알레르기 단어들을 반복
+                    # 사용자 알레르기와 일치하는 단어가 있는 경우
+                    if allergy in word and allergy not in displayed_allergies:
+                        # 단어를 하이라이팅된 형태로 바꿔줌
+                        word = word.replace(allergy, '『' + allergy + '』')
+                        print("알레르기 단어 발견:", allergy)  
+                        # 하이라이팅된 단어를 리스트에 추가
+                        highlighted_text.append(word if word != original_word else original_word)
+                        # 중복 방지를 위해 알레르기 단어를 displayed_allergies에 추가
+                        displayed_allergies.add(allergy)
 
-       
-        print('일반:', ocr_texts) 
+            # 현재 텍스트의 하이라이팅된 부분을 문자열로 변환하여 리스트에 추가
+            highlighted_texts.append(' '.join(highlighted_text))
+
+        print('일반:', ocr_texts)
         print('하이라이팅:', highlighted_texts)
-        return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
+        
+        return jsonify({'text': highlighted_texts}), 200
 
     else:
-        return jsonify({'message': '사용자 정보를 찾을 수 없습니다.'}), 404
+        return jsonify({'message': '최근에 저장된 정보가 없습니다.'}), 404
 
 
-
-
-
-# 이미지를 받아서 OCR을 수행하는 엔드포인트
 @app.route('/ocr', methods=['POST'])
 def ocr_image():
     if 'image' not in request.files:
         return jsonify({'message': '이미지가 없습니다.'}), 400
-    
+
     image = request.files['image']
 
     if image.filename == '':
@@ -134,29 +138,39 @@ def ocr_image():
 
     # OCR 수행
     ocr_texts = perform_ocr(filepath)
-    #최근에 저장된 정보 가져오기
+
+    # 최근에 저장된 정보 가져오기
     recently = NoUserOCR.query.order_by(NoUserOCR.timestamp.desc()).first()
-        
+
     if recently:
-            allergies = recently.allergies.replace('"', '').split(", ") if recently.allergies else []
-            print('가져온 사용자 알레르기 정보:', allergies)
-    
+        allergies = recently.allergies.replace('"', '').split(", ") if recently.allergies else []
+        print('가져온 사용자 알레르기 정보:', allergies)
+        highlighted_texts = []  # 하이라이팅된 텍스트를 저장할 리스트
 
-    # 텍스트에서 특정 단어를 찾아 하이라이팅 적용
-    highlighted_texts = []
-    for text in ocr_texts:
-            highlighted_text = []
-            for word in text.split():
-                if any(allergy in word for allergy in allergies):
-                    highlighted_text.append('『' + word + '』')
-                else:
-                    highlighted_text.append(word)
-            highlighted_texts.append(highlighted_text)
+        # OCR 텍스트에서 하이라이팅 단어 찾기 
+        for text in ocr_texts:
+            highlighted_text = []  # 현재 텍스트의 하이라이팅된 부분을 저장할 리스트
+            displayed_allergies = set()  # 중복된 알레르기 단어를 방지하기 위한 set
+            for word in text.split():  # 단어 단위로 분리해서 반복
+                original_word = word  # 원래 단어를 저장
+                for allergy in allergies:  # 사용자의 알레르기 단어들을 반복
+                    # 사용자 알레르기와 일치하는 단어가 있는 경우
+                    if allergy in word and allergy not in displayed_allergies:
+                        # 단어를 하이라이팅된 형태로 바꿔줌
+                        word = word.replace(allergy, '『' + allergy + '』')
+                        print("알레르기 단어 발견:", allergy)  
+                        # 하이라이팅된 단어를 리스트에 추가
+                        highlighted_text.append(word if word != original_word else original_word)
+                        # 중복 방지를 위해 알레르기 단어를 displayed_allergies에 추가
+                        displayed_allergies.add(allergy)
 
-       
-            print('일반:', ocr_texts) 
-            print('하이라이팅:', highlighted_texts)
-            return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
+            # 현재 텍스트의 하이라이팅된 부분을 문자열로 변환하여 리스트에 추가
+            highlighted_texts.append(' '.join(highlighted_text))
+
+        print('일반:', ocr_texts)
+
+        return jsonify({'text': highlighted_texts}), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=7000, debug=True)

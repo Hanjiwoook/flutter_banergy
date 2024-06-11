@@ -140,11 +140,7 @@ class _FilteringPageState extends State<FilteringPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              content: const Text(
-                '적용완료!!',
-                style:
-                    TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
-              ),
+              content: const Text('적용완료!!'),
               actions: [
                 TextButton(
                   onPressed: () async {
@@ -205,7 +201,6 @@ class _FilteringPageState extends State<FilteringPage> {
       appBar: AppBar(
         title: const Text(
           "알러지 필터링",
-          style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -215,7 +210,8 @@ class _FilteringPageState extends State<FilteringPage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MyHomePage()),
+              //마이페이지에서는 뒤로 가면 마이페이지가 되도록(아니면 오류가 남 ㅠ)
+              MaterialPageRoute(builder: (context) => const MypageApp()),
             );
           },
         ),
@@ -278,8 +274,8 @@ class _FilteringPageState extends State<FilteringPage> {
                 '적용',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 22,
-                  fontFamily: 'PretendardSemiBold',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -308,11 +304,7 @@ class _FilteringPageState extends State<FilteringPage> {
                 checkListValue2.add(filter);
               });
             },
-            title: Text(
-              filter,
-              style:
-                  const TextStyle(fontFamily: 'PretendardMedium', fontSize: 18),
-            ),
+            title: Text(filter),
             value: checkListValue2.contains(filter) ? true : false,
           ),
         );

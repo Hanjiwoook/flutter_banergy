@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/login/login_fristapp.dart';
+import 'package:flutter_banergy/login/login_firstapp.dart';
 import 'package:flutter_banergy/login/login_login.dart';
 import 'package:http/http.dart' as http;
 //import 'joinwidget.dart';

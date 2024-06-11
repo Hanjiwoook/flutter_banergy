@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Ocrresult extends StatefulWidget {
@@ -22,11 +23,11 @@ class Ocrresult extends StatefulWidget {
 }
 
 class _OcrresultState extends State<Ocrresult> {
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late String _ocrResult;
   late String _hirightingResult;
   bool isOcrInProgress = true;
   String? authToken;
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -220,11 +221,22 @@ class _OcrresultState extends State<Ocrresult> {
                         decoration: const BoxDecoration(
                           color: Colors.yellow,
                         ),
-                        child: Text(
-                          _hirightingResult,
-                          style: const TextStyle(
-                            fontSize: 20.0,
-                          ),
+                        child: Column(
+                          children: [
+                            // const Text(
+                            //   '사용자와 맞지 않은 상품입니다.',
+                            //   style: TextStyle(
+                            //     fontSize: 20.0,
+                            //   ),
+                            // ),
+                            const SizedBox(height: 10),
+                            Text(
+                              _hirightingResult,
+                              style: const TextStyle(
+                                fontSize: 20.0,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     const SizedBox(height: 20),
@@ -239,10 +251,27 @@ class _OcrresultState extends State<Ocrresult> {
               ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // 현재 화면 닫기
+                Navigator.pop(context);
               },
-              child: const Text('닫기'),
-            ),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: const Color(0xFF03C95B),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              ),
+              child: const SizedBox(
+                width: 50,
+                height: 30,
+                child: Center(
+                  child: Text(
+                    '닫기',
+                    style: TextStyle(
+                        fontFamily: 'PretendardSemiBold', fontSize: 18),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),

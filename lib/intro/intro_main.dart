@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/intro/splash_screen.dart';
 import 'package:flutter_banergy/intro/auth_screen.dart';
-import 'package:flutter_banergy/login/login_fristapp.dart';
+import 'package:flutter_banergy/login/login_firstapp.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/rounter/locations.dart';
 // ignore: depend_on_referenced_packages

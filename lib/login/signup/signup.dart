@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/login/login_fristapp.dart';
+import 'package:flutter_banergy/login/login_FirstApp.dart';
 import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/login/signup/joinwidget.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     const MaterialApp(
@@ -23,7 +25,6 @@ class JoinApp extends StatefulWidget {
 }
 
 class _JoinAppState extends State<JoinApp> {
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   //유효성 검사 부분
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -33,6 +34,7 @@ class _JoinAppState extends State<JoinApp> {
   late final GlobalKey<FormState> _formKey;
   late final TextEditingController _dateController;
   String? _selectedGender;
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   // 회원가입 함수
   Future<void> _signup(BuildContext context) async {
@@ -211,10 +213,7 @@ class _JoinAppState extends State<JoinApp> {
                         ),
                         TextFormField(
                           controller: _usernameController,
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 66.0, vertical: 12.0),
-                          ),
+                          decoration: const InputDecoration(),
                           validator: (value) {
                             String pattern =
                                 r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$';
@@ -242,10 +241,7 @@ class _JoinAppState extends State<JoinApp> {
                             TextFormField(
                               controller: _passwordController,
                               obscureText: true,
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 66.0, vertical: 12.0),
-                              ),
+                              decoration: const InputDecoration(),
                               validator: (value) {
                                 String pattern =
                                     r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
@@ -275,10 +271,7 @@ class _JoinAppState extends State<JoinApp> {
                                 TextFormField(
                                   controller: _confirmPasswordController,
                                   obscureText: true,
-                                  decoration: const InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 66.0, vertical: 12.0),
-                                  ),
+                                  decoration: const InputDecoration(),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return '비밀번호 재확인.';
@@ -296,15 +289,13 @@ class _JoinAppState extends State<JoinApp> {
                                     const Text(
                                       '이름',
                                       style: TextStyle(
-                                          fontSize: 24,
-                                          fontFamily: 'PretendardBold'),
+                                        fontSize: 24,
+                                        fontFamily: 'PretendardBold',
+                                      ),
                                     ),
                                     TextFormField(
                                       controller: _nameController,
-                                      decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 66.0, vertical: 12.0),
-                                      ),
+                                      decoration: const InputDecoration(),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return '다시 확인해주세요.';

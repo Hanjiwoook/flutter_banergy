@@ -3,14 +3,17 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/login/login_fristapp.dart';
+
+import 'package:flutter_banergy/login/login_firstapp.dart';
+
 import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     MaterialApp(
       home: LoginApp(),
@@ -18,11 +21,12 @@ void main() {
   );
 }
 
+// ignore: must_be_immutable
 class LoginApp extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   LoginApp({super.key});
 
   @override
@@ -53,35 +57,39 @@ class LoginApp extends StatelessWidget {
                   InputField(
                     label: '아이디',
                     controller: _usernameController,
+                    obscureText: false,
                   ),
                   const SizedBox(height: 20),
                   InputField(
                     label: '비밀번호',
                     controller: _passwordController,
+                    obscureText: true,
                   ),
                   const SizedBox(height: 15),
                   const SizedBox(height: 80),
                   ElevatedButton(
-                    onPressed: () => _login(context),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color(0xFF03C95B),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: Center(
-                        child: Text(
-                          '로그인',
-                          style: TextStyle(
-                              fontFamily: 'PretendardSemiBold', fontSize: 22),
+                      onPressed: () => _login(context),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFF03C95B),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                    ),
-                  ),
+                      child: const SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Center(
+                          child: Text(
+                            '로그인',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'PretendardSemiBold',
+                              fontSize: 22,
+                            ),
+                          ),
+                        ),
+                      ))
                 ],
               ),
             ),
@@ -93,7 +101,6 @@ class LoginApp extends StatelessWidget {
 
   // 로그인 함수
   Future<void> _login(BuildContext context) async {
-    String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
     final String username = _usernameController.text;
     final String password = _passwordController.text;
 
@@ -193,7 +200,6 @@ class LoginApp extends StatelessWidget {
 
   // 사용자 정보를 가져오는 함수
   Future<void> fetchUserInfo(String token) async {
-    String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
     try {
       final response = await http.get(
         Uri.parse('$baseUrl:3000/loginuser'),
@@ -266,11 +272,13 @@ class InputField extends StatelessWidget {
   final bool isTextArea;
   final String label;
   final TextEditingController controller;
+  final bool obscureText;
 
   const InputField({
     this.isTextArea = false,
     required this.label,
     required this.controller,
+    required this.obscureText,
     super.key,
   });
 
@@ -284,6 +292,7 @@ class InputField extends StatelessWidget {
           style: const TextStyle(fontFamily: 'PretendardBold', fontSize: 30),
         ),
         TextFormField(
+          obscureText: obscureText,
           decoration: const InputDecoration(
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),

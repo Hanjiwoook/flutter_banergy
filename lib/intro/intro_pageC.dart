@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/login/login_fristapp.dart';
+import 'package:flutter_banergy/login/login_firstapp.dart';
 import 'package:flutter_banergy/product/code.dart';
 
 // ignore: must_be_immutable

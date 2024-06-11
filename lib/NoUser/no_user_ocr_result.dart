@@ -1,8 +1,11 @@
+// ignore: file_names
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Ocrresult2 extends StatefulWidget {
@@ -10,21 +13,21 @@ class Ocrresult2 extends StatefulWidget {
   final String ocrResult;
 
   const Ocrresult2({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.ocrResult,
-  }) : super(key: key);
+  });
 
   @override
   _OcrresultState createState() => _OcrresultState();
 }
 
 class _OcrresultState extends State<Ocrresult2> {
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late String _ocrResult;
   late String _hirightingResult;
   bool isOcrInProgress = true;
   List<String> userAllergies = []; // 사용자 알레르기 정보를 저장할 리스트
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -115,10 +118,7 @@ class _OcrresultState extends State<Ocrresult2> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyHomePage()),
-            );
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -193,10 +193,27 @@ class _OcrresultState extends State<Ocrresult2> {
               ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // 현재 화면 닫기
+                Navigator.pop(context);
               },
-              child: const Text('닫기'),
-            ),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: const Color(0xFF03C95B),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              ),
+              child: const SizedBox(
+                width: 50,
+                height: 30,
+                child: Center(
+                  child: Text(
+                    '닫기',
+                    style: TextStyle(
+                        fontFamily: 'PretendardSemiBold', fontSize: 18),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),

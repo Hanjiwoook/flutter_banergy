@@ -23,7 +23,6 @@ class _SearchWidgetState extends State<SearchWidget> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
-  bool _isSearching = false;
 
   @override
   void initState() {
@@ -173,15 +172,12 @@ class _SearchWidgetState extends State<SearchWidget> {
     final query = _searchController.text;
     if (query.isEmpty) {
       setState(() {
-        _isSearching = false;
         _products.clear();
       });
       return;
     }
 
-    setState(() {
-      _isSearching = true;
-    });
+    setState(() {});
 
     final response = await http.get(Uri.parse('$baseUrl:8000/?query=$query'));
     if (response.statusCode == 200) {
@@ -190,7 +186,6 @@ class _SearchWidgetState extends State<SearchWidget> {
         _products = data
             .map<Map<String, dynamic>>((item) => item as Map<String, dynamic>)
             .toList();
-        _isSearching = false;
       });
     } else {
       throw Exception('Failed to load products');

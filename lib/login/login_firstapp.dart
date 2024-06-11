@@ -14,7 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     MaterialApp(
       home: FirstApp(),
@@ -22,12 +23,13 @@ void main() {
   );
 }
 
+// ignore: must_be_immutable
 class FirstApp extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  FirstApp({Key? key});
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  FirstApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -70,16 +72,22 @@ class FirstApp extends StatelessWidget {
                         ),
                       ),
                       child: const SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: Center(
-                          child: Text(
-                            '로그인',
-                            style: TextStyle(
-                                fontFamily: 'PretendardSemiBold', fontSize: 18),
-                          ),
-                        ),
-                      ),
+                          width: double.infinity,
+                          height: 50,
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: Center(
+                              child: Text(
+                                '로그인',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'PretendardSemiBold',
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          )),
                     ),
 
                     //회원가입 이용하기
@@ -99,16 +107,22 @@ class FirstApp extends StatelessWidget {
                         ),
                       ),
                       child: const SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: Center(
-                          child: Text(
-                            '회원 가입하기',
-                            style: TextStyle(
-                                fontFamily: 'PretendardSemiBold', fontSize: 18),
-                          ),
-                        ),
-                      ),
+                          width: double.infinity,
+                          height: 50,
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: Center(
+                              child: Text(
+                                '회원가입',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'PretendardSemiBold',
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          )),
                     ),
                     const SizedBox(height: 40),
 

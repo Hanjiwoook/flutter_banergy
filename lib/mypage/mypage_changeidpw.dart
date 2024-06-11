@@ -155,7 +155,6 @@ class _ChangeidpwState extends State<Changeidpw> {
       appBar: AppBar(
         title: const Text(
           "비밀번호 변경하기",
-          style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -181,7 +180,6 @@ class _ChangeidpwState extends State<Changeidpw> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 40),
-                  const SizedBox(height: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -190,6 +188,7 @@ class _ChangeidpwState extends State<Changeidpw> {
                         style: TextStyle(
                             fontSize: 30, fontFamily: 'PretendardSemiBold'),
                       ),
+
                       InputField(
                         controller: _passwordController,
                         obscureText: true,
@@ -295,8 +294,7 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style:
-              const TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 25),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
         ),
         TextFormField(
           obscureText: obscureText,

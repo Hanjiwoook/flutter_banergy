@@ -51,7 +51,7 @@ class _BottomNavBarState extends State<BottomNavBar>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('$baseUrl:7000/ocr');
+    final url = Uri.parse('$baseUrl:8000/logindb/ocr');
     final request = http.MultipartRequest('POST', url);
     request.files
         .add(await http.MultipartFile.fromPath('image', pickedFile.path));

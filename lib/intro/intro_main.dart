@@ -83,7 +83,7 @@ class _introAppState extends State<introApp> {
   Future<void> fetchUserInfo(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },

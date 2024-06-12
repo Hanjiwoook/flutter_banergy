@@ -22,6 +22,7 @@ import 'package:flutter_banergy/main_category/instantfood.dart';
 import 'package:flutter_banergy/main_category/ramen.dart';
 import 'package:flutter_banergy/main_category/lunchbox.dart';
 import 'package:flutter_banergy/main_category/Sandwich.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
@@ -71,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('$baseUrl:7000/ocr');
+    final url = Uri.parse('$baseUrl:8000/nouser/ocr');
     final request = http.MultipartRequest('POST', url);
 
     request.files

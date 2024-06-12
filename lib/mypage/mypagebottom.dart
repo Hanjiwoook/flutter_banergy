@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //바텀 바 내용 구현
@@ -34,7 +35,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Future<void> _UploadImage(XFile pickedFile) async {
     // 이미지 업로드 및 OCR 수행
 
-    final url = Uri.parse('$baseUrl:7000/ocr');
+    final url = Uri.parse('$baseUrl:8000/logindb/ocr');
     final request = http.MultipartRequest('POST', url);
     request.files
         .add(await http.MultipartFile.fromPath('image', pickedFile.path));

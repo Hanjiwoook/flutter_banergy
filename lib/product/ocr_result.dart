@@ -57,7 +57,7 @@ class _OcrresultState extends State<Ocrresult> {
 
   Future<void> _getUserAllergies(String token) async {
     try {
-      final url = Uri.parse('$baseUrl:3000/loginuser');
+      final url = Uri.parse('$baseUrl:8000/logindb/loginuser');
       var response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $token'},
@@ -88,7 +88,7 @@ class _OcrresultState extends State<Ocrresult> {
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -107,7 +107,7 @@ class _OcrresultState extends State<Ocrresult> {
   //  OCR 결과
   Future<void> _getOCRResult(String token) async {
     try {
-      final url = Uri.parse('$baseUrl:3000/result');
+      final url = Uri.parse('$baseUrl:8000/logindb/result');
       var response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $token'},

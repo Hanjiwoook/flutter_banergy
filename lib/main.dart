@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('$baseUrl:3000/ocr');
+    final url = Uri.parse('$baseUrl:8000/logindb/ocr');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $authToken';
     request.files
@@ -131,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen>
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200;

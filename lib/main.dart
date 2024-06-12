@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/home_search_widget.dart';
@@ -14,6 +16,7 @@ import 'package:flutter_banergy/main_filtering_allergies.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
@@ -357,73 +360,119 @@ class _HomeScreenState extends State<HomeScreen>
                             if (!cameraStatus.isGranted) {
                               await Permission.camera.request();
                             }
+
                             final pickedFile = await _imagePicker.pickImage(
                               source: ImageSource.camera,
-                            ) as XFile;
+                            );
 
-                            setState(() {
-                              // 이미지 선택 후에 진행 바를 나타냅니다.
-                              isOcrInProgress = true;
-                            });
-
-                            try {
-                              await _uploadImage(pickedFile);
-                              // ignore: use_build_context_synchronously
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) => Ocrresult(
-                                    imagePath: pickedFile.path,
-                                    ocrResult: ocrResult,
-                                  ),
-                                ),
-                              );
-                            } catch (e) {
-                              debugPrint('OCR failed: $e');
-                            } finally {
+                            if (pickedFile != null) {
                               setState(() {
-                                // OCR 작업 완료 후에 진행 바를 숨깁니다.
-                                isOcrInProgress = false;
+                                // 이미지 선택 후에 진행 바를 나타냅니다.
+                                isOcrInProgress = true;
                               });
+
+                              try {
+                                CroppedFile? croppedFile =
+                                    await ImageCropper().cropImage(
+                                  sourcePath: pickedFile.path,
+                                  aspectRatioPresets: [
+                                    CropAspectRatioPreset.square,
+                                    CropAspectRatioPreset.ratio3x2,
+                                    CropAspectRatioPreset.original,
+                                    CropAspectRatioPreset.ratio4x3,
+                                    CropAspectRatioPreset.ratio16x9,
+                                  ],
+                                );
+
+                                if (croppedFile != null) {
+                                  // 크롭된 이미지를 파일로 변환
+                                  File croppedImageFile =
+                                      File(croppedFile.path);
+
+                                  // OCR 작업 수행 (여기서 _uploadImage를 호출)
+                                  await _uploadImage(
+                                      XFile(croppedImageFile.path));
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          Ocrresult(
+                                        imagePath: croppedImageFile.path,
+                                        ocrResult: ocrResult,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                debugPrint('OCR failed: $e');
+                              } finally {
+                                setState(() {
+                                  isOcrInProgress = false;
+                                });
+                              }
                             }
                           },
-                          child: const Text(
-                            '카메라',
-                            style: TextStyle(fontFamily: 'PretendardMedium'),
-                          ),
+                          child: const Text('카메라'),
                         ),
                       ),
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () async {
                             final pickedFile = await _imagePicker.pickImage(
-                                source: ImageSource.gallery) as XFile;
-                            setState(() {
-                              isOcrInProgress = true;
-                            });
-                            // ignore: duplicate_ignore
-                            try {
-                              // OCR 수행
-                              await _uploadImage(pickedFile);
+                              source: ImageSource.gallery,
+                            );
 
-                              // ignore: use_build_context_synchronously
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) => Ocrresult(
-                                    imagePath: pickedFile.path,
-                                    ocrResult: ocrResult,
-                                  ),
-                                ),
-                              );
-                            } catch (e) {
-                              debugPrint('OCR failed: $e');
+                            if (pickedFile != null) {
+                              setState(() {
+                                isOcrInProgress = true;
+                              });
+
+                              try {
+                                CroppedFile? croppedFile =
+                                    await ImageCropper().cropImage(
+                                  sourcePath: pickedFile.path,
+                                  aspectRatioPresets: [
+                                    CropAspectRatioPreset.square,
+                                    CropAspectRatioPreset.ratio3x2,
+                                    CropAspectRatioPreset.original,
+                                    CropAspectRatioPreset.ratio4x3,
+                                    CropAspectRatioPreset.ratio16x9,
+                                  ],
+                                );
+
+                                if (croppedFile != null) {
+                                  // 크롭된 이미지를 파일로 변환
+                                  File croppedImageFile =
+                                      File(croppedFile.path);
+
+                                  // OCR 작업 수행 (여기서 _uploadImage를 호출)
+                                  await _uploadImage(
+                                    XFile(croppedImageFile.path),
+                                  );
+
+                                  // 결과를 화면에 표시
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          Ocrresult(
+                                        imagePath: croppedImageFile.path,
+                                        ocrResult: ocrResult,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                debugPrint('OCR failed: $e');
+                              } finally {
+                                setState(() {
+                                  isOcrInProgress = false;
+                                });
+                              }
                             }
                           },
-                          child: const Text(
-                            '갤러리',
-                            style: TextStyle(fontFamily: 'PretendardMedium'),
-                          ),
+                          child: const Text('갤러리'),
                         ),
                       ),
                       Expanded(
@@ -612,14 +661,14 @@ class _ProductGridState extends State<ProductGrid> {
     final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     if (!isLoggedIn) {
       // 로그인x
-      // ignore: use_build_context_synchronously
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginApp()),
       );
     } else {
       // 로그인 o -> 메인 페이지로 이동
-      // ignore: use_build_context_synchronously
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MainpageApp()),

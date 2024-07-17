@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
-import 'package:flutter_banergy/product/%EC%9E%84%EC%8B%9C%EC%B0%9C.dart';
-import 'package:flutter_banergy/product/basket.dart';
 import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:image_picker/image_picker.dart';
@@ -51,7 +49,7 @@ class _BottomNavBarState extends State<BottomNavBar>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('$baseUrl:8000/logindb/ocr');
+    final url = Uri.parse('$baseUrl:7000/ocr');
     final request = http.MultipartRequest('POST', url);
     request.files
         .add(await http.MultipartFile.fromPath('image', pickedFile.path));
@@ -241,19 +239,13 @@ class _BottomNavBarState extends State<BottomNavBar>
               );
             },
           );
-        } else if (index == 3) {
-          setState(() {
-            _selectedIndex = index;
-          });
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const MainpageApp2()));
         } else if (index == 4) {
           setState(() {
             _selectedIndex = index;
           });
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const MypageApp()),
+            MaterialPageRoute(builder: (context) => const MyHomePage()),
           );
         }
       },

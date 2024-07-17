@@ -4,7 +4,6 @@ import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard_write_screen.dart';
-import 'package:flutter_banergy/product/%EC%9E%84%EC%8B%9C%EC%B0%9C.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
@@ -12,6 +11,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../product/like_product.dart';
 
 void main() async {
   await dotenv.load();
@@ -104,7 +105,7 @@ class _FreeboardState extends State<Freeboard>
   }
 
   int _selectedIndex = 1; // 현재 선택된 바텀 네비게이션 바 아이템의 인덱스
-  int _current = 1;
+  //int _current = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +113,6 @@ class _FreeboardState extends State<Freeboard>
       appBar: AppBar(
         title: const Text(
           "커뮤니티",
-          style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -313,7 +313,7 @@ class _FreeboardState extends State<Freeboard>
               _selectedIndex = index;
             });
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const MainpageApp2()));
+                MaterialPageRoute(builder: (context) => const LPscreen()));
           } else if (index == 4) {
             setState(() {
               _selectedIndex = index;
@@ -333,6 +333,7 @@ class FreeboardList extends StatefulWidget {
   const FreeboardList({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _FreeboardListState createState() => _FreeboardListState();
 }
 

@@ -4,12 +4,12 @@ import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
-import 'package:flutter_banergy/main_category/gimbap.dart';
+//import 'package:flutter_banergy/main_category/gimbap.dart';
 import 'package:flutter_banergy/main_category/ramen.dart';
 import 'package:flutter_banergy/main_category/drink.dart';
 import 'package:flutter_banergy/main_category/instantfood.dart';
-import 'package:flutter_banergy/main_category/lunchbox.dart';
-import 'package:flutter_banergy/main_category/sandwich.dart';
+// import 'package:flutter_banergy/main_category/lunchbox.dart';
+// import 'package:flutter_banergy/main_category/sandwich.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -24,7 +24,6 @@ class _SnacksScreenState extends State<SnacksScreen> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
-  bool _isSearching = false;
 
   @override
   void initState() {
@@ -106,15 +105,15 @@ class _SnacksScreenState extends State<SnacksScreen> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 20), // 위아래 여백을 조절
                   scrollDirection: Axis.horizontal,
-                  itemCount: 8, // 카테고리 개수
+                  itemCount: 5, // 카테고리 개수
                   itemBuilder: (BuildContext context, int index) {
                     // 카테고리 정보 (이름과 이미지 파일 이름)
                     List<Map<String, String>> categories = [
                       {"name": "라면", "image": "001.png"},
                       {"name": "패스트푸드", "image": "002.png"},
-                      {"name": "김밥", "image": "003.png"},
-                      {"name": "도시락", "image": "004.png"},
-                      {"name": "샌드위치", "image": "005.png"},
+                      // {"name": "김밥", "image": "003.png"},
+                      // {"name": "도시락", "image": "004.png"},
+                      // {"name": "샌드위치", "image": "005.png"},
                       {"name": "음료", "image": "006.png"},
                       {"name": "간식", "image": "007.png"},
                       {"name": "과자", "image": "008.png"},
@@ -178,15 +177,15 @@ class _SnacksScreenState extends State<SnacksScreen> {
       case '패스트푸드':
         screen = const InstantfoodScreen();
         break;
-      case '김밥':
-        screen = const GimbapScreen();
-        break;
-      case '도시락':
-        screen = const LunchboxScreen();
-        break;
-      case '샌드위치':
-        screen = const SandwichScreen();
-        break;
+      // case '김밥':
+      //   screen = const GimbapScreen();
+      //   break;
+      // case '도시락':
+      //   screen = const LunchboxScreen();
+      //   break;
+      // case '샌드위치':
+      //   screen = const SandwichScreen();
+      //   break;
       case '음료':
         screen = const DrinkScreen();
         break;
@@ -210,15 +209,12 @@ class _SnacksScreenState extends State<SnacksScreen> {
     final query = _searchController.text;
     if (query.isEmpty) {
       setState(() {
-        _isSearching = false;
         _products.clear();
       });
       return;
     }
 
-    setState(() {
-      _isSearching = true;
-    });
+    setState(() {});
 
     final response = await http.get(Uri.parse('$baseUrl:8000/?query=$query'));
     if (response.statusCode == 200) {
@@ -227,7 +223,6 @@ class _SnacksScreenState extends State<SnacksScreen> {
         _products = data
             .map<Map<String, dynamic>>((item) => item as Map<String, dynamic>)
             .toList();
-        _isSearching = false;
       });
     } else {
       throw Exception('Failed to load products');
@@ -257,7 +252,7 @@ class _SliverFoodGridState extends State<SliverFoodGrid> {
   Future<void> fetchData() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:8000/?query=디저트'),
+        Uri.parse('$baseUrl:8000/?query=간식'),
       );
       if (response.statusCode == 200) {
         setState(() {
@@ -286,30 +281,65 @@ class _SliverFoodGridState extends State<SliverFoodGrid> {
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          return Card(
-            child: InkWell(
-              onTap: () {
-                _handleProductClick(context, products[index]);
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Image.network(
-                        products[index].frontproduct,
-                        fit: BoxFit.cover,
+          final product = products[index];
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: InkWell(
+                onTap: () {
+                  _handleProductClick(context, product);
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 15, // 이미지 높이 제한
+                    ),
+                    SizedBox(
+                      height: 90,
+                      child: Center(
+                        child: Image.network(
+                          product.frontproduct,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    products[index].name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4.0),
-                  Text(products[index].allergens),
-                ],
+                    const SizedBox(height: 14.0),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        product.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'PretendardRegular',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4.0),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        product.allergens,
+                        maxLines: 1, //한줄만 보이게 하는 것
+                        overflow: TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           );

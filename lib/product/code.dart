@@ -1,11 +1,16 @@
+// ignore_for_file: camel_case_types
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/Search_Widget.dart';
+import 'package:flutter_banergy/appbar/search_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_banergy/product/product_detail.dart';
+import 'package:flutter_banergy/main.dart';
 
 class CodeScreen extends StatefulWidget {
   final String resultCode;
@@ -13,13 +18,14 @@ class CodeScreen extends StatefulWidget {
   const CodeScreen({super.key, required this.resultCode});
 
   @override
+  // ignore: library_private_types_in_public_api, no_logic_in_create_state
   _CodeScreenState createState() => _CodeScreenState(resultCode);
 }
 
 class _CodeScreenState extends State<CodeScreen> {
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late String resultCode;
   late List<Product> products = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   _CodeScreenState(this.resultCode); // 생성자 수정
 
@@ -49,11 +55,18 @@ class _CodeScreenState extends State<CodeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: const [
-          Flexible(
-            child: SearchWidget(),
-          ),
-        ],
+        title: const SearchWidget(), // 검색 위젯
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () => {
+                  //pop으로 하면 오류가 떠서 홈스크린으로 대체
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MainpageApp(),
+                    ),
+                  ),
+                }),
       ),
       body: scanGrid(products: products),
       bottomNavigationBar: const BottomNavBar(),
@@ -61,20 +74,16 @@ class _CodeScreenState extends State<CodeScreen> {
   }
 }
 
-class scanGrid extends StatefulWidget {
+class scanGrid extends StatelessWidget {
   final List<Product> products;
 
   scanGrid({super.key, required this.products});
 
-  @override
-  State<scanGrid> createState() => _scanGridState();
-}
-
-class _scanGridState extends State<scanGrid> {
   final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
+
   @override
   Widget build(BuildContext context) {
-    if (widget.products.isEmpty) {
+    if (products.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -110,29 +119,29 @@ class _scanGridState extends State<scanGrid> {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
         ),
-        itemCount: widget.products.length,
+        itemCount: products.length,
         itemBuilder: (context, index) {
           return Card(
             child: InkWell(
               onTap: () {
-                _handleProductClick(context, widget.products[index]);
+                _handleProductClick(context, products[index]);
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Image.network(
-                      widget.products[index].frontproduct,
+                      products[index].frontproduct,
                       fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(height: 8.0),
                   Text(
-                    widget.products[index].name,
+                    products[index].name,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4.0),
-                  Text(widget.products[index].allergens),
+                  Text(products[index].allergens),
                 ],
               ),
             ),
@@ -141,41 +150,13 @@ class _scanGridState extends State<scanGrid> {
       );
     }
   }
-}
 
-void _handleProductClick(BuildContext context, Product product) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('상품 정보'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('카테고리: ${product.kategorie}'),
-              Text('이름: ${product.name}'),
-              Image.network(
-                product.frontproduct,
-                fit: BoxFit.cover,
-              ),
-              Image.network(
-                product.backproduct,
-                fit: BoxFit.cover,
-              ),
-              Text('알레르기 식품: ${product.allergens}'),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('닫기'),
-          ),
-        ],
-      );
-    },
-  );
+  void _handleProductClick(BuildContext context, Product product) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => pdScreen(product: product),
+      ),
+    );
+  }
 }

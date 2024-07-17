@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, json, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from random import shuffle  # 랜덤을 위함
@@ -74,6 +74,7 @@ class User(db.Model):
     date = db.Column(db.String(80), nullable=True)
     gender = db.Column(db.String(20), nullable=False)
     allergies = db.Column(db.String(128), nullable=True)
+    liked_products = db.Column(db.String(5012), nullable=True)
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -132,11 +133,14 @@ def get_products():
         # 검색어가 있는 경우 검색어를 포함하는 제품 정보를 반환합니다.
         if query == '라면':
             products = Product.query.filter(Product.kategorie.like("%라면%")).all()
-        elif query == '디저트':
-            products = Product.query.filter(Product.kategorie.like("%디저트%")).all()
+        elif query == '간식':
+            products = Product.query.filter(Product.kategorie.like("%간식%")).all()
         elif query == '음료':
             products = Product.query.filter(Product.kategorie.like("%음료%")).all()
-        # 나중에 여기다 나머지 카테고리들 추가하기 (케이크 , 패스트푸드 , 밀키드 ,샌드위치)
+        elif query == '과자':
+            products = Product.query.filter(Product.kategorie.like("%과자%")).all()
+        elif query == '가공식품':
+            products = Product.query.filter(Product.kategorie.like("%가공식품%")).all()
         else:
             # 다른 검색어의 경우 제품명에 검색어를 포함하는 제품 정보를 반환합니다.
             products = Product.query.filter(Product.name.like(f"%{query}%")).all()
@@ -160,6 +164,7 @@ def get_products():
         product_list.append(product_data)
     return jsonify(product_list)
 
+    
 
 @app.route('/scan', methods=['GET'])
 def scan_products():
@@ -281,42 +286,34 @@ def get_ocr_result():
     # OCR 수행
     ocr_texts = perform_ocr(recent_file_path)
 
-    # 최근에 저장된 정보 가져오기
+    #최근에 저장된 정보 가져오기
     recently = NoUserOCR.query.order_by(NoUserOCR.timestamp.desc()).first()
 
     if recently:
-        allergies_str = recently.allergies.strip('[]')
+        # allergies = recently.allergies.replace('"', '').split(", ") if recently.allergies else []
+        allergies_str = recently.allergies.strip('[]')  
         allergies_list = allergies_str.replace('"', '').split(',')
 
-        highlighted_texts = []  # 하이라이팅된 텍스트를 저장할 리스트
+        allergies_list = [allergy.strip() for allergy in allergies_list]
+        print('가져온 사용자 알레르기 정보:', allergies_list)
 
-        # OCR 텍스트에서 하이라이팅 단어 찾기
+        highlighted_texts = []
         for text in ocr_texts:
-            highlighted_text = []  # 현재 텍스트의 하이라이팅된 부분을 저장할 리스트
-            displayed_allergies = set()  # 중복된 알레르기 단어를 방지하기 위한 set
-            for word in text.split():  # 단어 단위로 분리해서 반복
-                original_word = word  # 원래 단어를 저장
-                for allergy in allergies_list:  # 사용자의 알레르기 단어들을 반복
-                    # 사용자 알레르기와 일치하는 단어가 있는 경우
-                    if allergy in word and allergy not in displayed_allergies:
-                        # 단어를 하이라이팅된 형태로 바꿔줌
-                        word = word.replace(allergy, '『' + allergy + '』')
-                        print("알레르기 단어 발견:", allergy)
-                        # 하이라이팅된 단어를 리스트에 추가
-                        highlighted_text.append(word if word != original_word else original_word)
-                        # 중복 방지를 위해 알레르기 단어를 displayed_allergies에 추가
-                        displayed_allergies.add(allergy)
+            highlighted_text = []
+            for word in text.split():
+                if any(allergies_str in word for allergies_str in allergies_list):
+                    highlighted_text.append('『' + word + '』')
+                else:
+                    highlighted_text.append(word)
+            highlighted_texts.append(highlighted_text)
 
-            # 현재 텍스트의 하이라이팅된 부분을 문자열로 변환하여 리스트에 추가
-            highlighted_texts.append(' '.join(highlighted_text))
 
-        print('일반:', ocr_texts)
+        print('일반:', ocr_texts) 
         print('하이라이팅:', highlighted_texts)
-
-        return jsonify({'text': highlighted_texts}), 200
+        return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
 
     else:
-        return jsonify({'message': '최근에 저장된 정보가 없습니다.'}), 404
+        return jsonify({'message': '사용자 정보를 찾을 수 없습니다.'}), 404
 
 @app.route('/nouser/ocr', methods=['POST'])
 def ocr_image():
@@ -339,33 +336,23 @@ def ocr_image():
     recently = NoUserOCR.query.order_by(NoUserOCR.timestamp.desc()).first()
 
     if recently:
-        allergies = recently.allergies.replace('"', '').split(", ") if recently.allergies else []
-        print('가져온 사용자 알레르기 정보:', allergies)
-        highlighted_texts = []  # 하이라이팅된 텍스트를 저장할 리스트
+            allergies = recently.allergies.replace('"', '').split(", ") if recently.allergies else []
+            print('가져온 사용자 알레르기 정보:', allergies)
+            # 텍스트에서 특정 단어를 찾아 하이라이팅 적용
+    highlighted_texts = []
+    for text in ocr_texts:
+            highlighted_text = []
+            for word in text.split():
+                if any(allergy in word for allergy in allergies):
+                    highlighted_text.append('『' + word + '』')
+                else:
+                    highlighted_text.append(word)
+            highlighted_texts.append(highlighted_text)
 
-        # OCR 텍스트에서 하이라이팅 단어 찾기
-        for text in ocr_texts:
-            highlighted_text = []  # 현재 텍스트의 하이라이팅된 부분을 저장할 리스트
-            displayed_allergies = set()  # 중복된 알레르기 단어를 방지하기 위한 set
-            for word in text.split():  # 단어 단위로 분리해서 반복
-                original_word = word  # 원래 단어를 저장
-                for allergy in allergies:  # 사용자의 알레르기 단어들을 반복
-                    # 사용자 알레르기와 일치하는 단어가 있는 경우
-                    if allergy in word and allergy not in displayed_allergies:
-                        # 단어를 하이라이팅된 형태로 바꿔줌
-                        word = word.replace(allergy, '『' + allergy + '』')
-                        print("알레르기 단어 발견:", allergy)
-                        # 하이라이팅된 단어를 리스트에 추가
-                        highlighted_text.append(word if word != original_word else original_word)
-                        # 중복 방지를 위해 알레르기 단어를 displayed_allergies에 추가
-                        displayed_allergies.add(allergy)
 
-            # 현재 텍스트의 하이라이팅된 부분을 문자열로 변환하여 리스트에 추가
-            highlighted_texts.append(' '.join(highlighted_text))
-
-        print('일반:', ocr_texts)
-
-        return jsonify({'text': highlighted_texts}), 200
+            print('일반:', ocr_texts) 
+            print('하이라이팅:', highlighted_texts)
+            return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
 
 # ========================== nouser =========================== #
 
@@ -545,6 +532,145 @@ def protectloginusered():
         return jsonify({'message': '사용자를 찾을 수 없습니다.'}), 404
 
 
+# 찜 추가하기
+@app.route('/logindb/like', methods=['POST'])
+@jwt_required()
+def like():
+    current_username = get_jwt_identity()  # 현재 로그인한 사용자의 username 가져오기
+    data = request.json
+    product_id = data.get('product_id')
+
+    if not product_id:
+        return jsonify({'message': '상품 ID가 필요합니다.'}), 400
+
+    user = User.query.filter_by(username=current_username).first()
+    if not user:
+        return jsonify({'message': '사용자를 찾을 수 없습니다.'}), 404
+
+    # 사용자의 좋아요 목록 가져오기 (JSON 형태의 문자열로 저장된 필드)
+    liked_products = set(json.loads(user.liked_products or '[]'))
+
+    try:
+        if product_id in liked_products:
+            liked_products.remove(product_id)
+        else:
+            liked_products.add(product_id)
+
+        # 좋아요 목록을 다시 JSON 형태의 문자열로 저장하여 업데이트
+        user.liked_products = json.dumps(list(liked_products))
+        db.session.commit()
+
+        return jsonify({'message': '좋아요 상태가 업데이트되었습니다.'}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print("좋아요 상태 업데이트 실패:", str(e))
+        return jsonify({'message': '좋아요 상태 업데이트 실패 ㅠ.ㅠ'}), 500
+
+#좋아요 누른 상품들 제외하고 보여주기!!
+@app.route('/logindb/show_product', methods=['GET'])
+@jwt_required()
+def get_product():
+    current_username = get_jwt_identity()  # 현재 로그인한 사용자의 username 가져오기
+    user = User.query.filter_by(username=current_username).first()  # 로그인한 사용자에서 찜한 상품들 가져오기
+    
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    # 사용자가 좋아요한 상품 ID 리스트
+    liked_product_ids = json.loads(user.liked_products or '[]')
+    print(liked_product_ids)
+    # 좋아요한 상품들 가져오기
+    liked_products = Product.query.filter(Product.id.in_(liked_product_ids)).all()
+
+    # 모든 제품 정보를 가져오기
+    all_products = Product.query.all()
+    
+    # 좋아요하지 않은 상품 정보만 필터링하여 반환
+    filtered_products = []
+    for product in all_products:
+        if product not in liked_products:
+            product_data = {
+                'id': product.id,
+                'barcode': product.barcode,
+                'name': product.name,
+                'kategorie': product.kategorie,
+                'frontproduct': product.frontproduct,
+                'backproduct': product.backproduct,
+                'allergens': product.allergens
+            }
+            filtered_products.append(product_data)
+    
+    shuffle(filtered_products)  # 랜덤으로 보여줌
+    return jsonify(filtered_products), 200
+
+
+
+ # 찜 삭제하기
+@app.route('/logindb/deletelike', methods=['POST'])
+@jwt_required()
+def deletelike():
+    current_username = get_jwt_identity()  # 현재 로그인한 사용자의 username 가져오기
+    data = request.json
+    product_id = data.get('product_id')
+
+    if not product_id:
+        return jsonify({'message': '상품 ID가 필요합니다.'}), 400
+
+    user = User.query.filter_by(username=current_username).first()
+    if not user:
+        return jsonify({'message': '사용자를 찾을 수 없습니다.'}), 404
+
+    # 사용자의 좋아요 목록 가져오기 (JSON 형태의 문자열로 저장된 필드)
+    liked_products = set(json.loads(user.liked_products or '[]'))
+
+    if product_id in liked_products:
+        liked_products.remove(product_id)
+    else:
+        return jsonify({'message': '해당 상품은 찜 x.'}), 400
+
+    # 좋아요 목록을 다시 JSON 형태의 문자열로 저장하여 업데이트
+    user.liked_products = json.dumps(list(liked_products))
+
+    try:
+        db.session.commit()
+        return jsonify({'message': '찜이 취소되었습니다.'}), 200
+    except Exception as e:
+        db.session.rollback()
+        print("찜 취소 실패:", str(e))
+        return jsonify({'message': '찜 취소 실패'}), 500  
+
+
+#찜 누른 상품들 
+@app.route('/logindb/getlike', methods=['GET'])
+@jwt_required()
+def get_liked_products():
+    current_username = get_jwt_identity()
+    user = User.query.filter_by(username=current_username).first()
+    if not user:
+        return jsonify({'message': '사용자를 찾을 수 없습니다.'}), 404
+
+    liked_product_ids = json.loads(user.liked_products or '[]')
+
+    liked_products = Product.query.filter(Product.id.in_(liked_product_ids)).all()
+
+    liked_products_list = [
+        {
+            'id': product.id,
+            'barcode': product.barcode,
+            'name': product.name,
+            'kategorie': product.kategorie,
+            'frontproduct': product.frontproduct,
+            'backproduct': product.backproduct,
+            'allergens': product.allergens
+        } for product in liked_products
+    ]
+
+    return jsonify({'liked_products': liked_products_list}), 200
+
+
+
+
 # 필터링 적용부분
 @app.route('/logindb/allergies', methods=['GET', 'POST'])
 @jwt_required()
@@ -715,7 +841,8 @@ def logindb_get_ocr_result():
                     highlighted_text.append(word)
             highlighted_texts.append(highlighted_text)
 
-        print('일반:', ocr_texts)
+
+        print('일반:', ocr_texts) 
         print('하이라이팅:', highlighted_texts)
         return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
 
@@ -725,4 +852,3 @@ if __name__ == '__main__':
     csv_file_path = './product.csv'
     init(csv_file_path)
     app.run(host='0.0.0.0', port=8000, debug=True)
-

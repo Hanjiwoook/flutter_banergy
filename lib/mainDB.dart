@@ -1,5 +1,7 @@
 // DB Product + 컴뮤니티 + 유저 정보까지
 
+// ignore_for_file: file_names
+
 //상품 정보들
 class Product {
   final int id;
@@ -24,15 +26,14 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id'],
-      barcode: json['barcode'],
-      kategorie: json['kategorie'],
-      name: json['name'],
-      frontproduct: json['frontproduct'],
-      backproduct: json['backproduct'],
-      allergens: json['allergens'],
-      isHearted: json['isHearted'] ?? false,
-    );
+        id: json['id'],
+        barcode: json['barcode'],
+        kategorie: json['kategorie'],
+        name: json['name'],
+        frontproduct: json['frontproduct'],
+        backproduct: json['backproduct'],
+        allergens: json['allergens'],
+        isHearted: json['isHearted'] ?? false);
   }
   Map<String, dynamic> toJson() {
     return {

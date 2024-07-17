@@ -84,7 +84,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MypageApp(),
+                        builder: (context) => const MyHomePage(),
                       ),
                     );
                   },
@@ -145,8 +145,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
               children: [
                 const Text(
                   '상품추가',
-                  style:
-                      TextStyle(fontSize: 22, fontFamily: 'PretendardSemiBold'),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
                 InputField(
@@ -160,6 +159,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   isTextArea: true,
                 ),
                 _buildPhotoArea(),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -226,7 +226,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             height: 250,
             child: Image.file(_image!),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           ElevatedButton.icon(
             onPressed: () {
               if (_image != null) {

@@ -1,16 +1,14 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, duplicate_ignore, collection_methods_unrelated_type, non_constant_identifier_names
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/home_search_widget.dart';
-import 'package:flutter_banergy/bottombar.dart';
-import 'package:flutter_banergy/login/login_login.dart';
+//import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
-import 'package:flutter_banergy/product/%EC%9E%84%EC%8B%9C%EC%B0%9C.dart';
+import 'package:flutter_banergy/product/like_product.dart';
 import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
-import 'package:flutter_banergy/product/pd_choice.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:flutter_banergy/main_filtering_allergies.dart';
 import 'package:http/http.dart' as http;
@@ -21,16 +19,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:photo_view/photo_view.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
-import 'package:flutter_banergy/main_category/gimbap.dart';
 import 'package:flutter_banergy/main_category/snacks.dart';
 import 'package:flutter_banergy/main_category/Drink.dart';
 import 'package:flutter_banergy/main_category/instantfood.dart';
 import 'package:flutter_banergy/main_category/ramen.dart';
-import 'package:flutter_banergy/main_category/lunchbox.dart';
-import 'package:flutter_banergy/main_category/Sandwich.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -152,19 +146,11 @@ class _HomeScreenState extends State<HomeScreen>
   ];
   List<Product> likedProducts = [];
 
-  void _showLikedProducts(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LikedProductsWidget(likedProducts: likedProducts),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Home_SearchWidget(), // 검색 위젯
         actions: [
           IconButton(
@@ -185,120 +171,125 @@ class _HomeScreenState extends State<HomeScreen>
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const MainpageApp2(),
+                builder: (context) => const LPscreen(),
               ),
             ),
           ),
         ],
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 220,
-              child: Stack(
-                children: [
-                  sliderWidget(),
-                  sliderIndicator(),
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 120,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 8, // 카테고리 개수
-                itemBuilder: (BuildContext context, int index) {
-                  // 카테고리 정보 (이름과 이미지 파일 이름)
-                  List<Map<String, String>> categories = [
-                    {"name": "라면", "image": "001.png"},
-                    {"name": "패스트푸드", "image": "002.png"},
-                    {"name": "김밥", "image": "003.png"},
-                    {"name": "도시락", "image": "004.png"},
-                    {"name": "샌드위치", "image": "005.png"},
-                    {"name": "음료", "image": "006.png"},
-                    {"name": "간식", "image": "007.png"},
-                    {"name": "과자", "image": "008.png"},
-                  ];
-
-                  // 현재 카테고리
-                  var category = categories[index];
-
-                  return GestureDetector(
-                    onTap: () {
-                      _navigateToScreen(
-                        context,
-                        category["name"]!,
-                      );
-                    },
-                    child: SizedBox(
-                      width: 100,
-                      child: Container(
-                        margin: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(
-                              child: Image.asset(
-                                'assets/images/${category["image"]}',
-                                width: 60, // 이미지의 너비
-                                height: 60, // 이미지의 높이
-                              ),
-                            ),
-                            Text(
-                              '${category["name"]}', // 카테고리 이름 라벨
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontFamily: 'PretendardBold',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-
-          const ProductGrid(), // 상품 그리드
-
-          if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+        ),
+        child: CustomScrollView(
+          slivers: [
             SliverToBoxAdapter(
-              child: Container(
-                alignment: Alignment.center,
-                color: Colors.black.withOpacity(0.5),
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              child: SizedBox(
+                height: 220,
+                child: Stack(
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 8),
-                    Text(
-                      '서버에 이미지 업로드 중... \n 최대 2~3분이 소요됩니다',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
+                    sliderWidget(),
+                    sliderIndicator(),
                   ],
                 ),
               ),
             ),
-        ],
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 5, // 카테고리 개수
+                  itemBuilder: (BuildContext context, int index) {
+                    // 카테고리 정보 (이름과 이미지 파일 이름)
+                    List<Map<String, String>> categories = [
+                      {"name": "라면", "image": "001.png"},
+                      {"name": "패스트푸드", "image": "002.png"},
+                      // {"name": "김밥", "image": "003.png"},
+                      // {"name": "도시락", "image": "004.png"},
+                      // {"name": "샌드위치", "image": "005.png"},
+                      {"name": "음료", "image": "006.png"},
+                      {"name": "간식", "image": "007.png"},
+                      {"name": "과자", "image": "008.png"},
+                    ];
+
+                    // 현재 카테고리
+                    var category = categories[index];
+
+                    return GestureDetector(
+                      onTap: () {
+                        _navigateToScreen(
+                          context,
+                          category["name"]!,
+                        );
+                      },
+                      child: SizedBox(
+                        width: 100,
+                        child: Container(
+                          margin: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              Expanded(
+                                child: Image.asset(
+                                  'assets/images/${category["image"]}',
+                                  width: 60, // 이미지의 너비
+                                  height: 60, // 이미지의 높이
+                                ),
+                              ),
+                              Text(
+                                '${category["name"]}', // 카테고리 이름 라벨
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'PretendardBold',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+            const ProductGrid(), // 상품 그리드
+
+            if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시
+              SliverToBoxAdapter(
+                child: Container(
+                  alignment: Alignment.center,
+                  color: Colors.black.withOpacity(0.5),
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 8),
+                      Text(
+                        '서버에 이미지 업로드 중... \n 최대 2~3분이 소요됩니다',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        //type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.green, // 선택된 아이템의 색상
         unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
         selectedLabelStyle:
             const TextStyle(color: Colors.green), // 선택된 아이템의 라벨 색상
+
         items: const [
           BottomNavigationBarItem(
             icon: ImageIcon(
@@ -509,7 +500,7 @@ class _HomeScreenState extends State<HomeScreen>
             });
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const MainpageApp2()),
+              MaterialPageRoute(builder: (context) => const LPscreen()),
             );
           } else if (index == 4) {
             setState(() {
@@ -534,15 +525,15 @@ class _HomeScreenState extends State<HomeScreen>
       case '패스트푸드':
         screen = const InstantfoodScreen();
         break;
-      case '김밥':
-        screen = const GimbapScreen();
-        break;
-      case '도시락':
-        screen = const LunchboxScreen();
-        break;
-      case '샌드위치':
-        screen = const SandwichScreen();
-        break;
+      // case '김밥':
+      //   screen = const GimbapScreen();
+      //   break;
+      // case '도시락':
+      //   screen = const LunchboxScreen();
+      //   break;
+      // case '샌드위치':
+      //   screen = const SandwichScreen();
+      //break;
       case '음료':
         screen = const DrinkScreen();
         break;
@@ -625,7 +616,6 @@ class ProductGrid extends StatefulWidget {
   const ProductGrid({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProductGridState createState() => _ProductGridState();
 }
 
@@ -633,67 +623,96 @@ class _ProductGridState extends State<ProductGrid> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late List<Product> products = [];
   List<Product> likedProducts = [];
+  String? authToken;
 
   @override
   void initState() {
     super.initState();
+    _checkLoginStatus();
     fetchData(); // 데이터 가져오기
+    //likeData();
   }
 
-  // 상품 데이터를 가져오는 비동기 함수
-  Future<void> fetchData() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl:8000/'),
-    );
-    if (response.statusCode == 200) {
+  // 사용자의 로그인 상태를 확인하고 인증 토큰을 가져옵니다.
+  Future<void> _checkLoginStatus() async {
+    final token = await _loginUser();
+    if (token != null) {
+      final isValid = await _validateToken(token);
       setState(() {
-        final List<dynamic> productList = json.decode(response.body);
-        products = productList.map((item) => Product.fromJson(item)).toList();
+        authToken = isValid ? token : null;
+        if (isValid) {
+          fetchData(); // 상품 정보 가져오기
+        }
       });
-    } else {
-      throw Exception('Failed to load data');
     }
   }
 
-  // 사용자의 로그인 상태를 확인하고 메인 페이지로 리디렉션하는 함수
-  Future<void> checkLoginStatus(BuildContext context) async {
+  // 사용자가 이미 로그인했는지 확인합니다.
+  Future<String?> _loginUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    if (!isLoggedIn) {
-      // 로그인x
+    return prefs.getString('authToken');
+  }
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginApp()),
+  // 토큰의 유효성을 확인합니다.
+  Future<bool> _validateToken(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
+        headers: {'Authorization': 'Bearer $token'},
       );
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('Error validating token: $e');
+      return false;
+    }
+  }
+
+  //상품 정보 불러오기
+  Future<void> fetchData() async {
+    if (authToken == null) return;
+    final response = await http.get(
+      Uri.parse('$baseUrl:8000/logindb/show_product'),
+      headers: {'Authorization': 'Bearer $authToken'},
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        final List<dynamic> productList = json.decode(response.body);
+        products = productList.map((json) => Product.fromJson(json)).toList();
+      });
+    }
+  }
+
+  Future<void> Likeproduct(Product product) async {
+    final url = Uri.parse('$baseUrl:8000/logindb/like');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken'
+      },
+      body: json.encode({'product_id': product.id}),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        product.isHearted = !product.isHearted;
+        _toggleLikedStatus(product); // 하트 상태 업데이트
+      });
     } else {
-      // 로그인 o -> 메인 페이지로 이동
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainpageApp()),
-      );
+      throw Exception('Failed to toggle like');
     }
   }
 
   void _toggleLikedStatus(Product product) {
     setState(() {
       if (likedProducts.contains(product)) {
-        likedProducts.remove(product);
+        likedProducts.remove(product); // 좋아요 상태 삭제
       } else {
-        likedProducts.add(product);
+        likedProducts.add(product); // 좋아요 상태 추가
       }
     });
   }
-
-  // void _showLikedProducts(BuildContext context) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => LikedProductsWidget(likedProducts: likedProducts),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -704,66 +723,88 @@ class _ProductGridState extends State<ProductGrid> {
       ),
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
-          return Card(
-            color: backgroundColor,
-            child: Stack(
-              children: [
-                InkWell(
-                  onTap: () {
-                    _handleProductClick(context, products[index]);
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 110, // 이미지 높이 제한
-                        child: Center(
-                          child: Image.network(
-                            products[index].frontproduct,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 14.0),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          products[index].name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'PretendardRegular',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4.0),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          products[index].allergens,
-                          maxLines: 1, //한줄만 보이게 하는 것
-                          overflow: TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
-                        ),
-                      )
-                    ],
-                  ),
+          final product = products[index];
+          return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: likedProducts.contains(products[index])
-                        ? const Icon(Icons.favorite, color: Colors.red)
-                        : const Icon(Icons.favorite_border),
-                    onPressed: () {
-                      _toggleLikedStatus(products[index]);
-                    },
-                  ),
+                child: Stack(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        _handleProductClick(context, products[index]);
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 15, // 이미지 높이 제한
+                          ),
+                          SizedBox(
+                            height: 90,
+                            child: Center(
+                              child: Image.network(
+                                products[index].frontproduct,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 14.0),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              products[index].name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'PretendardRegular',
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4.0),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              products[index].allergens,
+                              maxLines: 1, //한줄만 보이게 하는 것
+                              overflow:
+                                  TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: Icon(
+                          product.isHearted
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: product.isHearted ? Colors.red : null,
+                        ),
+                        onPressed: () {
+                          _toggleLikedStatus(products[index]);
+                          Likeproduct(product);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ));
         },
         childCount: products.length,
       ),
@@ -776,91 +817,6 @@ class _ProductGridState extends State<ProductGrid> {
       context,
       MaterialPageRoute(
         builder: (context) => pdScreen(product: product),
-      ),
-    );
-  }
-}
-
-//좋아요 누른걸 보여주는 부분
-class LikedProductsWidget extends StatelessWidget {
-  final List<Product> likedProducts;
-
-  const LikedProductsWidget({super.key, required this.likedProducts});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      bottomNavigationBar: const BottomNavBar(),
-      body: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-        ),
-        itemCount: likedProducts.length,
-        itemBuilder: (context, index) {
-          final product = likedProducts[index];
-          return Card(
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => pd_choice(product: product),
-                  ),
-                );
-              },
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: Image.network(
-                            product.frontproduct,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              product.name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4.0),
-                            Text(product.allergens),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: IconButton(
-                      icon: const Icon(Icons.favorite, color: Colors.red),
-                      onPressed: () {
-                        // 좋아요 취소 기능을 추가할 수 있음
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }

@@ -166,15 +166,6 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.check_box),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const LPscreen(),
-              ),
-            ),
-          ),
         ],
       ),
       body: DecoratedBox(

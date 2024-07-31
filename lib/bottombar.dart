@@ -1,6 +1,7 @@
 import 'dart:convert';
 //import 'dart:io';
 import 'package:flutter/material.dart';
+//import 'package:flutter_banergy/ai/ai_recommend.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
@@ -89,9 +90,9 @@ class _BottomNavBarState extends State<BottomNavBar>
         ),
         BottomNavigationBarItem(
           icon: ImageIcon(
-            AssetImage('assets/images/bubble-chat.png'),
+            AssetImage('assets/images/ai.png'),
           ),
-          label: '커뮤니티',
+          label: 'AI 추천',
         ),
         BottomNavigationBarItem(
           icon: ImageIcon(

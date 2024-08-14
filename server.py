@@ -11,10 +11,17 @@ from dateutil.parser import parse
 import os
 import random
 
+
 from openai import OpenAI
 import base64
 
-open_key = "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"
+from dotenv import load_dotenv
+import os
+
+# .env 파일 활성화
+load_dotenv()
+
+open_key =  os.getenv('OPENAI_API_KEY')
 client = OpenAI(api_key=open_key)
 
 MODEL="gpt-4o"

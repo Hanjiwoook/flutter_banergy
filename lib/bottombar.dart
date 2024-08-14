@@ -175,7 +175,9 @@ class _BottomNavBarState extends State<BottomNavBar>
                         },
                         child: const Text(
                           '카메라',
-                          style: TextStyle(fontFamily: 'PretendardMedium'),
+                          style: TextStyle(
+                            fontFamily: 'PretendardMedium',
+                          ),
                         ),
                       ),
                     ),

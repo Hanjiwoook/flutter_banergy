@@ -33,13 +33,24 @@ class IntroPageA extends StatelessWidget {
                         ),
                       ),
                       TextSpan(
-                        text: '로\n',
+                        text: '로',
                         style: TextStyle(
                           fontSize: textSize,
                           color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
+                      WidgetSpan(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Image.asset(
+                            'images/00012.png',
+                            width: 40, // Adjust the width and height as needed
+                            height: 40,
+                          ),
+                        ),
+                      ),
+                      const TextSpan(text: '\n'),
                       TextSpan(
                         text: '마음대로 먹지도\n',
                         style: TextStyle(

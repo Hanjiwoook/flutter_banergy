@@ -19,7 +19,7 @@ class IntroPageB extends StatelessWidget {
             children: [
               const SizedBox(height: 60),
               Padding(
-                padding: const EdgeInsets.only(right: 80.0),
+                padding: const EdgeInsets.only(right: 40.0),
                 child: RichText(
                   textAlign: TextAlign.left,
                   text: TextSpan(
@@ -33,35 +33,77 @@ class IntroPageB extends StatelessWidget {
                         ),
                       ),
                       TextSpan(
-                        text: '서비스로\n',
-                        style: TextStyle(
-                          fontSize: textSize,
-                          color: const Color(0xFF3F3B3B), // 검정색
-                          fontFamily: 'PretendardBold',
-                        ),
-                      ),
-                      TextSpan(
-                        text: '개인이\n',
+                        text: '서비스로',
                         style: TextStyle(
                           fontSize: textSize,
                           color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
+                      WidgetSpan(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: Image.asset(
+                            'images/0006.png',
+                            width: 55,
+                            height: 50,
+                          ),
+                        ),
+                      ),
                       TextSpan(
-                        text: '원하는 정보만\n',
+                        text: '개인이',
                         style: TextStyle(
                           fontSize: textSize,
                           color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
+                      WidgetSpan(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 3.0),
+                          child: Image.asset(
+                            'images/0009.png',
+                            width: 50,
+                            height: 50,
+                          ),
+                        ),
+                      ),
+                      const TextSpan(text: '\n'),
+                      TextSpan(
+                        text: '원하는 정보만',
+                        style: TextStyle(
+                          fontSize: textSize,
+                          color: const Color(0xFF3F3B3B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      WidgetSpan(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 3.0),
+                          child: Image.asset(
+                            'images/00011.png',
+                            width: 50,
+                            height: 50,
+                          ),
+                        ),
+                      ),
+                      const TextSpan(text: '\n'),
                       TextSpan(
                         text: '빠르게 확인',
                         style: TextStyle(
                           fontSize: textSize,
                           color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      WidgetSpan(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                          child: Image.asset(
+                            'images/0002.png',
+                            width: 60,
+                            height: 60,
+                          ),
                         ),
                       ),
                     ],

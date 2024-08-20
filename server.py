@@ -935,7 +935,6 @@ def get_ai_result():
 # from openai import OpenAI
 
 # # Replace with your actual API key
-# open_key = "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"
 # client = OpenAI(api_key=open_key)
 
 # MODEL = "gpt-4o"

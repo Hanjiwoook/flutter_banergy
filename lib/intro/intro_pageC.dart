@@ -21,7 +21,7 @@ class IntroPageC extends StatelessWidget {
             children: [
               const SizedBox(height: 60),
               Padding(
-                padding: const EdgeInsets.only(right: 40.0),
+                padding: const EdgeInsets.only(right: 0.0),
                 child: RichText(
                   textAlign: TextAlign.left,
                   text: TextSpan(
@@ -51,27 +51,69 @@ class IntroPageC extends StatelessWidget {
                         ),
                       ),
                       TextSpan(
-                        text: '기술로 \n',
+                        text: '기술로',
                         style: TextStyle(
                           fontSize: textSize,
                           color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      WidgetSpan(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                          child: Image.asset(
+                            'images/0008.png',
+                            width: 50,
+                            height: 50,
+                          ),
                         ),
                       ),
                       TextSpan(
-                        text: '간편하게\n',
+                        text: '간편하게',
                         style: TextStyle(
                           fontSize: textSize,
                           color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
+                      WidgetSpan(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Image.asset(
+                            'images/0005.png',
+                            width: 70,
+                            height: 60,
+                          ),
+                        ),
+                      ),
+                      WidgetSpan(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Image.asset(
+                            'images/0004.png',
+                            width: 70,
+                            height: 60,
+                          ),
+                        ),
+                      ),
+                      const TextSpan(text: '\n'),
                       TextSpan(
                         text: '찾아보는 음식 성분들!',
                         style: TextStyle(
                           fontSize: textSize,
                           color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      const TextSpan(text: '\n'),
+                      WidgetSpan(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: Image.asset(
+                            'images/0007.png',
+                            width: 90,
+                            height: 70,
+                          ),
                         ),
                       ),
                     ],

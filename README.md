@@ -73,6 +73,7 @@
 - 2024 한이음 ICT멘토링 <u>**공모전 입상**</u>
 - 2024 한국인터넷방송통신학회 [**논문지 게재**](https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003075378)
 - 2023 IIBC 한국인터넷방송통신학회 <u>**우수논문상**</u>
+- 2025 SCC 창의문제해결프로젝트 <u>**최우수상**</u>
 
 ---
 

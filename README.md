@@ -1,16 +1,79 @@
-# flutter_banergy
+# 식품 알레르기 환자를 위한 애플리케이션
 
-A new Flutter project.
+### 📱우리의 앱은
 
-## Getting Started
+- **`*알레르기*`로 마음대로 먹지도 못하는 당신을 위한 맞춤형 관리 앱** <br>
+- **`*필터링*` 서비스로 개인이 원하는 정보만 빠르게 확인** <br>
+- **`*ocr,바코드*` 기술로 간편하게 찾아보는 음식 성분들!** <br>
+- **`*AI*`에게 추천받는 음식 레시피와 식당!**
 
-This project is a starting point for a Flutter application.
+<hr>
 
-A few resources to get you started if this is your first Flutter project:
+### ⏲️ 개발 기간
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- 2023.09 ~ 2024.10
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<hr>
+
+### 💻 개발환경
+|                                                                                                       FE                                                                                                       |                                                                                                                                                            BE                                                                                                                                                            |                                                                                                                                                           OTHER                                                                                                                                                            |
+| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white"><br><img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=Flutter&logoColor=white"> | <img src="https://img.shields.io/badge/Python-07405E?style=for-the-badge&logo=python&logoColor=white"><br><img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white"><br><img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white"> | <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"><br><img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white"><br><img src="https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white"> |
+
+<hr>
+### 👨🏼‍💻 팀원소개
+
+| 한지욱 <a href="https://github.com/Hanjiwoook"> <img style="width: 16px; height: 16px; margin-right: 20px;" alt="깃허브" src="https://cdn-icons-png.flaticon.com/512/25/25231.png"></a> | 임산성 <a href="https://github.com/LimSanSung"> <img style="width: 16px; height: 16px; margin-right: 20px;" alt="깃허브" src="https://cdn-icons-png.flaticon.com/512/25/25231.png"></a> | 김남빈 <a href="https://github.com/kimnambin"> <img style="width: 16px; height: 16px; margin-right: 20px;" alt="깃허브" src="https://cdn-icons-png.flaticon.com/512/25/25231.png"></a> | 이예원 <a href="https://github.com/leeyewon17"> <img style="width: 16px; height: 16px; margin-right: 20px;" alt="깃허브" src="https://cdn-icons-png.flaticon.com/512/25/25231.png"></a> | 양병승 <a href="https://github.com/sameYBS"> <img style="width: 16px; height: 16px; margin-right: 20px;" alt="깃허브" src="https://cdn-icons-png.flaticon.com/512/25/25231.png"></a> |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                                                        리더, FE                                                                                         |                                                                                         BE, PM                                                                                          |                                                                                         FE, BE                                                                                         |                                                                                         PM, DE                                                                                          |                                                                                        FE, BE                                                                                        |
+
+<br>
+
+---
+
+### 🗺️ 아키텍쳐
+
+<div align="center">
+  
+![화면 캡처 2024-08-28 163606](https://github.com/user-attachments/assets/7d7760a4-db28-4806-a4c5-548d8cbe0799)
+
+</div>
+
+<br>
+
+---
+
+### 🖋️ 사용자 시나리오
+
+<div align="center">
+  
+![밴러지시나리오](https://github.com/user-attachments/assets/eb854f77-5823-40dc-af54-618aec762368)
+
+</div>
+
+---
+
+### ⚙️ 앱의 흐름도
+
+<div align="center">
+  
+|                                                        로그인 및 메인화면                                                        |                                                             주요기능                                                             |                                                            마이페이지                                                            |
+| :------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://github.com/kimnambin/banergy/assets/127464935/f5696983-774f-440d-94a5-019347d5d37a" width="467" height="333"/> | <img src="https://github.com/kimnambin/banergy/assets/127464935/debe6aec-fe7d-4b61-9788-211003795b9a" width="467" height="333"/> | <img src="https://github.com/kimnambin/banergy/assets/127464935/f8f419a2-21f0-40c7-b539-6c3da16039ad" width="467" height="333"/> |
+
+</div>
+
+<br>
+
+---
+
+### 🏆 수상 및 활동
+
+- 2024 코엑스 <u>**작품 전시**</u> 2024.10.25
+- 2024 한이음 ICT멘토링 <u>**공모전 입상**</u>
+- 2024 한국인터넷방송통신학회 [**논문지 게재**](https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003075378)
+- 2023 IIBC 한국인터넷방송통신학회 <u>**우수논문상**</u>
+
+---
+
+### 📌 주요 기능
